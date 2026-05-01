@@ -28,6 +28,7 @@ export default {
     '^@tauri-apps/plugin-notification$': '<rootDir>/src/__mocks__/@tauri-apps/api/notification.ts',
     '^jspdf$': '<rootDir>/src/__tests__/__mocks__/jspdf.js',
     '^jspdf-autotable$': '<rootDir>/src/__tests__/__mocks__/jspdf-autotable.js',
+    '^uuid$': '<rootDir>/src/__tests__/__mocks__/uuid.js',
   },
   setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup.ts'],
   collectCoverageFrom: [
