@@ -13,12 +13,14 @@ import { ScriptGenerationPipeline, ScriptGenerationResult } from '../steps/step1
 import { composeStoryboard, Storyboard } from '../steps/step2-storyboard/storyboard-composer';
 import { MaterialMatchingPipeline, MaterialMatchingResult } from '../steps/step3-material-matching/pipeline-controller';
 import { VoiceSynthesisPipeline, VoiceSynthesisResult } from '../steps/step4-voice-synthesis/pipeline-controller';
+import { KeyframePipeline } from '../steps/step5-keyframe/pipeline-controller';
 
 export enum MangaPipelineStep {
   SCRIPT = 'script',
   STORYBOARD = 'storyboard',
   MATERIAL = 'material',
   VOICE = 'voice',
+  KEYFRAME = 'keyframe',
 }
 
 export interface MangaPipelineState {
@@ -33,6 +35,7 @@ export interface MangaPipelineResult {
   storyboard?: Storyboard;
   materialResult?: MaterialMatchingResult;
   voiceResult?: VoiceSynthesisResult;
+  keyframeResult?: import('../steps/step5-keyframe/pipeline-controller').KeyframePipelineResult;
 }
 
 /**
@@ -61,7 +64,7 @@ export class MangaPipelineController extends BasePipelineController {
   // Sub-steps across all phases
   protected subSteps = [
     '解析文本',
-    '分析叙事结构', 
+    '分析叙事结构',
     '生成角色卡片',
     '生成场景',
     '整合剧本',
@@ -69,12 +72,15 @@ export class MangaPipelineController extends BasePipelineController {
     '生成分镜',
     '匹配素材',
     '合成语音',
+    '生成关键帧',
+    '合成视频',
   ];
 
   private scriptPipeline = new ScriptGenerationPipeline();
   private storyboardPipeline = null as any; // placeholder
   private materialPipeline = new MaterialMatchingPipeline();
   private voicePipeline = new VoiceSynthesisPipeline();
+  private keyframePipeline = new KeyframePipeline();
 
   private result: MangaPipelineResult = {};
   private currentStep: MangaPipelineStep = MangaPipelineStep.SCRIPT;
@@ -114,10 +120,11 @@ export class MangaPipelineController extends BasePipelineController {
 
   private calculateOverallProgress(step: MangaPipelineStep, stepProgress: number): number {
     const weights: Record<MangaPipelineStep, [number, number]> = {
-      [MangaPipelineStep.SCRIPT]: [0, 25],
-      [MangaPipelineStep.STORYBOARD]: [25, 50],
-      [MangaPipelineStep.MATERIAL]: [50, 75],
-      [MangaPipelineStep.VOICE]: [75, 100],
+      [MangaPipelineStep.SCRIPT]: [0, 20],
+      [MangaPipelineStep.STORYBOARD]: [20, 35],
+      [MangaPipelineStep.MATERIAL]: [35, 55],
+      [MangaPipelineStep.VOICE]: [55, 75],
+      [MangaPipelineStep.KEYFRAME]: [75, 100],
     };
     const [start, end] = weights[step];
     return start + (stepProgress / 100) * (end - start);
@@ -162,6 +169,26 @@ export class MangaPipelineController extends BasePipelineController {
       const voiceResult = (voiceOutput as any).voiceSynthesis as VoiceSynthesisResult;
       this.result.voiceResult = voiceResult;
       this.emitProgress(MangaPipelineStep.VOICE, 100, '合成语音');
+      await this.pauseCheck();
+
+      // ============ Step 5: Keyframe Generation ============
+      this.currentStep = MangaPipelineStep.KEYFRAME;
+      this.emitProgress(MangaPipelineStep.KEYFRAME, 0, '生成关键帧');
+      // Build keyframe scenes from storyboard
+      const keyframeScenes = this.result.storyboard!.scenes.map(scene => ({
+        sceneId: scene.sceneId,
+        sceneNumber: scene.description.sceneNumber,
+        description: scene.description.prompt,
+        location: scene.description.location || '',
+        emotion: scene.description.emotion || '',
+      }));
+      const keyframeOutput = await this.keyframePipeline.process({
+        scenes: keyframeScenes,
+        style: style as any,
+        aspectRatio: '16:9' as any,
+      });
+      this.result.keyframeResult = (keyframeOutput as any).keyframePipeline;
+      this.emitProgress(MangaPipelineStep.KEYFRAME, 100, '合成视频');
 
       return { mangaPipeline: this.result };
     } catch (err) {

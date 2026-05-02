@@ -8,6 +8,16 @@ export interface SceneDescription {
   styleHint: string;       // 风格标签
   aspectRatio: '16:9' | '9:16' | '4:3' | '1:1';
   duration: number;         // 秒
+  characterConstraints?: CharacterConstraint[];  // 角色一致性约束
+}
+
+export interface CharacterConstraint {
+  characterId: string;
+  name: string;
+  appearance: string;    // 外观描述
+  pose: string;          // 姿态
+  expression: string;    // 表情
+  outfit: string;        // 服装
 }
 
 export interface StylePreset {
@@ -46,7 +56,8 @@ export const STYLE_PRESETS: Record<string, StylePreset> = {
 
 export function generateSceneDescription(
   scene: ScriptScene,
-  style: string = 'default'
+  style: string = 'default',
+  characterConstraints?: CharacterConstraint[]
 ): SceneDescription {
   const preset = STYLE_PRESETS[style] || STYLE_PRESETS['default'];
 
@@ -66,8 +77,12 @@ export function generateSceneDescription(
     promptParts.push(`weather: ${scene.weather}`);
   }
 
-  // 人物描述
-  if (scene.characters.length > 0) {
+  // 注入角色一致性约束
+  if (characterConstraints && characterConstraints.length > 0) {
+    const characterPrompts = buildCharacterConstraintPrompts(scene, characterConstraints);
+    promptParts.push(...characterPrompts);
+  } else if (scene.characters.length > 0) {
+    // 降级：使用场景中已有的角色名
     promptParts.push(`characters: ${scene.characters.join(', ')}`);
   }
 
@@ -95,7 +110,37 @@ export function generateSceneDescription(
     styleHint: preset.name,
     aspectRatio: preset.aspectRatio,
     duration,
+    characterConstraints,
   };
+}
+
+function buildCharacterConstraintPrompts(
+  scene: ScriptScene,
+  constraints: CharacterConstraint[]
+): string[] {
+  const prompts: string[] = [];
+  const sceneCharNames = scene.characters.map(c => c.trim());
+
+  for (const constraint of constraints) {
+    // 检查该约束角色是否在当前场景中出现
+    const isInScene = sceneCharNames.some(
+      name => name.toLowerCase() === constraint.name.toLowerCase() ||
+             name.includes(constraint.name) ||
+             constraint.name.includes(name)
+    );
+
+    if (isInScene) {
+      // 注入详细外观约束，确保角色一致性
+      const charPrompt = `${constraint.name}: ${constraint.appearance}, ${constraint.outfit}, ${constraint.pose}, ${constraint.expression}`;
+      prompts.push(charPrompt);
+    }
+  }
+
+  if (prompts.length > 0) {
+    prompts.unshift(`consistent character design: ${prompts.join(' | ')}`);
+  }
+
+  return prompts;
 }
 
 function getEmotionPrompts(emotion: string): string[] {

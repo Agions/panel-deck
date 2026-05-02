@@ -1,7 +1,7 @@
 import { Script } from '../step1-script-generation/types/script';
 
 import { generateCharacterIllustration, CharacterIllustration } from './description/character-illustration-generator';
-import { generateSceneDescription, SceneDescription } from './description/scene-description-generator';
+import { generateSceneDescription, SceneDescription, CharacterConstraint } from './description/scene-description-generator';
 
 export interface Storyboard {
   scriptId: string;
@@ -36,9 +36,26 @@ export function composeStoryboard(
 ): Storyboard {
   const { style = 'anime', includeCharacters = true } = options;
 
-  // 生成场景描述
+  // 先生成角色立绘（用于后续一致性约束）
+  const characterIllustrations: CharacterIllustration[] = includeCharacters
+    ? script.characters.map(char => generateCharacterIllustration(char, style))
+    : [];
+
+  // 构建角色一致性约束
+  const characterConstraints: CharacterConstraint[] = characterIllustrations.map(
+    (illust): CharacterConstraint => ({
+      characterId: illust.characterId,
+      name: illust.name,
+      appearance: illust.prompt.match(/appearance: ([^,]+)/)?.[1] || '',
+      pose: illust.pose,
+      expression: illust.expression,
+      outfit: illust.outfit,
+    })
+  );
+
+  // 生成场景描述（注入角色一致性约束）
   const storyboardScenes: StoryboardScene[] = script.scenes.map(scene => {
-    const description = generateSceneDescription(scene, style);
+    const description = generateSceneDescription(scene, style, characterConstraints);
     // 允许通过 options 覆盖宽高比
     if (options.aspectRatio) {
       description.aspectRatio = options.aspectRatio;
@@ -50,11 +67,6 @@ export function composeStoryboard(
       status: 'pending',
     };
   });
-
-  // 生成角色立绘
-  const characterIllustrations: CharacterIllustration[] = includeCharacters
-    ? script.characters.map(char => generateCharacterIllustration(char, style))
-    : [];
 
   // 计算总时长
   const totalDuration = storyboardScenes.reduce(

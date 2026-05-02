@@ -1,3 +1,9 @@
+export interface AssetReference {
+  type: 'image' | 'audio' | 'video';
+  url: string;
+  description?: string;
+}
+
 export interface CharacterCard {
   id: string;
   name: string;
@@ -7,4 +13,5 @@ export interface CharacterCard {
   voiceSuggestion: string;
   relationships: { name: string; type: string }[];
   firstAppearance: string;
+  assetReferences: AssetReference[];
 }
