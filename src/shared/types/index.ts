@@ -3,6 +3,8 @@
  * Consolidated type definitions from src/types and src/core/types
  */
 
+export * from './video';
+
 /**
  * Section Map (for domain split preparation)
  * =========================================
@@ -18,252 +20,202 @@
 
 // CSS Module type declarations are in src/types/cssmodule.d.ts
 
-// ========== AI Model Types ==========
+// ========== AI Model Types (extracted to ai.models.ts) ==========
 
-export type AIModelType = 'wenxin' | 'qianwen' | 'spark' | 'chatglm' | 'doubao' | 'deepseek';
+export { AIModelType, AIModelInfo, AI_MODEL_INFO } from './ai.models';
 
-export interface AIModelInfo {
-  name: string;
-  provider: string;
-  description: string;
-  icon: string;
-  apiKeyFormat: string;
-}
+// ========== AI Core Types (extracted to ai.core.ts) ==========
 
-export const AI_MODEL_INFO: Record<AIModelType, AIModelInfo> = {
-  wenxin: {
-    name: '文心一言',
-    provider: '百度',
-    description: '百度文心大模型，有丰富的中文理解能力。',
-    icon: 'WenxinIcon',
-    apiKeyFormat: 'API_KEY:SECRET_KEY'
-  },
-  qianwen: {
-    name: '通义千问',
-    provider: '阿里云',
-    description: '阿里云推出的创新大模型，拥有强大的文本处理能力。',
-    icon: 'QianwenIcon',
-    apiKeyFormat: 'API_KEY'
-  },
-  spark: {
-    name: '讯飞星火',
-    provider: '科大讯飞',
-    description: '科大讯飞的认知大模型，支持多种语言理解和生成任务。',
-    icon: 'SparkIcon',
-    apiKeyFormat: 'APPID:API_KEY:API_SECRET'
-  },
-  chatglm: {
-    name: 'ChatGLM',
-    provider: '智谱AI',
-    description: '智谱AI推出的开源双语对话模型，支持中英文的对话生成。',
-    icon: 'ChatGLMIcon',
-    apiKeyFormat: 'API_KEY'
-  },
-  doubao: {
-    name: '豆包',
-    provider: '字节跳动',
-    description: '字节跳动推出的AI助手，拥有优秀的文本创作和理解能力。',
-    icon: 'DoubaoIcon',
-    apiKeyFormat: 'API_KEY'
-  },
-  deepseek: {
-    name: 'DeepSeek',
-    provider: 'DeepSeek',
-    description: '深度搜索推出的大语言模型，拥有强大的创作与思考能力。',
-    icon: 'DeepSeekIcon',
-    apiKeyFormat: 'API_KEY'
-  }
-};
+export * from './ai.core';
 
-// ========== Core Types from src/core/types/index.ts ==========
+// Original types commented out - moved to ai.core.ts
+// export type ModelProvider = 'openai' | 'anthropic' | 'google' | 'baidu' | 'alibaba' | 'zhipu' | 'iflytek' | 'tencent' | 'minimax' | 'moonshot' | 'bytedance' | 'kling';
+// export type ModelCategory = 'text' | 'code' | 'image' | 'video' | 'audio' | 'all';
 
-export type ModelProvider = 'openai' | 'anthropic' | 'google' | 'baidu' | 'alibaba' | 'zhipu' | 'iflytek' | 'tencent' | 'minimax' | 'moonshot' | 'bytedance' | 'kling';
-export type ModelCategory = 'text' | 'code' | 'image' | 'video' | 'audio' | 'all';
+// export type TTSProvider = 'edge' | 'azure' | 'aliyun' | 'baidu' | 'iflytek' | 'cosyvoice';
 
-export type TTSProvider = 'edge' | 'azure' | 'aliyun' | 'baidu' | 'iflytek' | 'cosyvoice';
+// export interface TTSVoice {
+//   id: string;
+//   name: string;
+//   gender: 'male' | 'female' | 'neutral';
+//   language: string;
+//   provider: TTSProvider;
+//   style?: string;
+//   description?: string;
+// }
 
-export interface TTSVoice {
-  id: string;
-  name: string;
-  gender: 'male' | 'female' | 'neutral';
-  language: string;
-  provider: TTSProvider;
-  style?: string;
-  description?: string;
-}
+// export interface TTSConfig {
+//   provider: TTSProvider;
+//   voice: string;
+//   speed: number;
+//   pitch: number;
+//   volume: number;
+//   format: 'audio-16khz-32kbitrate-mono-mp3' | 'audio-16khz-64kbitrate-mono-mp3' | 'audio-24khz-48kbitrate-mono-mp3' | 'audio-24khz-96kbitrate-mono-mp3';
+// }
 
-export interface TTSConfig {
-  provider: TTSProvider;
-  voice: string;
-  speed: number;
-  pitch: number;
-  volume: number;
-  format: 'audio-16khz-32kbitrate-mono-mp3' | 'audio-16khz-64kbitrate-mono-mp3' | 'audio-24khz-48kbitrate-mono-mp3' | 'audio-24khz-96kbitrate-mono-mp3';
-}
+// export interface TTSRequest {
+//   text: string;
+//   config: TTSConfig;
+//   signal?: AbortSignal;
+// }
 
-export interface TTSRequest {
-  text: string;
-  config: TTSConfig;
-  signal?: AbortSignal;
-}
+// export interface TTSResponse {
+//   audio: ArrayBuffer;
+//   duration: number;
+//   size: number;
+//   format: string;
+// }
 
-export interface TTSResponse {
-  audio: ArrayBuffer;
-  duration: number;
-  size: number;
-  format: string;
-}
+// export interface TTSStreamChunk {
+//   audio: ArrayBuffer;
+//   isFinal: boolean;
+// }
 
-export interface TTSStreamChunk {
-  audio: ArrayBuffer;
-  isFinal: boolean;
-}
+// export interface StreamCallback<T> {
+//   (chunk: T): void;
+//   (error: Error): void;
+// }
 
-export interface StreamCallback<T> {
-  (chunk: T): void;
-  (error: Error): void;
-}
+// export interface StreamOptions {
+//   model: string;
+//   messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
+//   temperature?: number;
+//   max_tokens?: number;
+//   onChunk: (content: string, isFinal: boolean) => void;
+//   signal?: AbortSignal;
+// }
 
-export interface StreamOptions {
-  model: string;
-  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
-  temperature?: number;
-  max_tokens?: number;
-  onChunk: (content: string, isFinal: boolean) => void;
-  signal?: AbortSignal;
-}
+// export interface AIModel {
+//   id: string;
+//   name: string;
+//   provider: ModelProvider;
+//   category: ModelCategory[];
+//   description: string;
+//   features: string[];
+//   tokenLimit: number;
+//   contextWindow: number;
+//   isPro?: boolean;
+//   isAvailable?: boolean;
+//   apiConfigured?: boolean;
+//   pricing?: {
+//     input: number;
+//     output: number;
+//     unit: string;
+//   };
+// }
 
-export interface AIModel {
-  id: string;
-  name: string;
-  provider: ModelProvider;
-  category: ModelCategory[];
-  description: string;
-  features: string[];
-  tokenLimit: number;
-  contextWindow: number;
-  isPro?: boolean;
-  isAvailable?: boolean;
-  apiConfigured?: boolean;
-  pricing?: {
-    input: number;
-    output: number;
-    unit: string;
-  };
-}
+// export interface AIModelSettings {
+//   enabled: boolean;
+//   apiKey?: string;
+//   apiSecret?: string;
+//   apiUrl?: string;
+//   apiVersion?: string;
+//   model?: string;
+//   temperature?: number;
+//   maxTokens?: number;
+//   topP?: number;
+//   frequencyPenalty?: number;
+//   presencePenalty?: number;
+// }
 
-export interface AIModelSettings {
-  enabled: boolean;
-  apiKey?: string;
-  apiSecret?: string;
-  apiUrl?: string;
-  apiVersion?: string;
-  model?: string;
-  temperature?: number;
-  maxTokens?: number;
-  topP?: number;
-  frequencyPenalty?: number;
-  presencePenalty?: number;
-}
+// export interface ModelConfigState {
+//   selectedModel: string;
+//   models: Record<string, AIModelSettings>;
+//   isLoading: boolean;
+//   error: string | null;
+// }
 
-export interface ModelConfigState {
-  selectedModel: string;
-  models: Record<string, AIModelSettings>;
-  isLoading: boolean;
-  error: string | null;
-}
+// export interface VideoInfo {
+//   id: string;
+//   path: string;
+//   name: string;
+//   duration: number;
+//   width: number;
+//   height: number;
+//   fps: number;
+//   format: string;
+//   size: number;
+//   thumbnail?: string;
+//   createdAt: string;
+// }
 
-export interface VideoInfo {
-  id: string;
-  path: string;
-  name: string;
-  duration: number;
-  width: number;
-  height: number;
-  fps: number;
-  format: string;
-  size: number;
-  thumbnail?: string;
-  createdAt: string;
-}
+// export interface Scene {
+//   id: string;
+//   startTime: number;
+//   endTime: number;
+//   thumbnail: string;
+//   description?: string;
+//   tags: string[];
+//   type?: string;
+//   confidence?: number;
+//   features?: any;
+//   objectCount?: number;
+//   dominantEmotion?: string;
+// }
 
-export interface Scene {
-  id: string;
-  startTime: number;
-  endTime: number;
-  thumbnail: string;
-  description?: string;
-  tags: string[];
-  type?: string;
-  confidence?: number;
-  features?: any;
-  objectCount?: number;
-  dominantEmotion?: string;
-}
+// export interface Keyframe {
+//   id: string;
+//   timestamp: number;
+//   thumbnail: string;
+//   description?: string;
+// }
 
-export interface Keyframe {
-  id: string;
-  timestamp: number;
-  thumbnail: string;
-  description?: string;
-}
+// export interface ObjectDetection {
+//   id: string;
+//   sceneId: string;
+//   category: string;
+//   label: string;
+//   confidence: number;
+//   bbox: {
+//     x: number;
+//     y: number;
+//     width: number;
+//     height: number;
+//   };
+//   timestamp: number;
+// }
 
-export interface ObjectDetection {
-  id: string;
-  sceneId: string;
-  category: string;
-  label: string;
-  confidence: number;
-  bbox: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
-  timestamp: number;
-}
-
-export interface EmotionAnalysis {
-  id: string;
-  sceneId: string;
-  timestamp: number;
-  emotions: Array<{
-    id: string;
-    name: string;
-    score: number;
-  }>;
-  dominant: string;
-  intensity: number;
-}
+// export interface EmotionAnalysis {
+//   id: string;
+//   sceneId: string;
+//   timestamp: number;
+//   emotions: Array<{
+//     id: string;
+//     name: string;
+//     score: number;
+//   }>;
+//   dominant: string;
+//   intensity: number;
+// }
 
 // Simple emotion tag used in video analysis
-export interface Emotion {
-  timestamp: number;
-  type: string;
-  intensity: number;
-}
+// export interface Emotion {
+//   timestamp: number;
+//   type: string;
+//   intensity: number;
+// }
 
-export interface VideoAnalysis {
-  id: string;
-  videoId: string;
-  title?: string;
-  duration?: number;
-  scenes: Scene[];
-  keyframes: Keyframe[];
-  objects: ObjectDetection[];
-  keyMoments?: KeyMoment[];
-  emotions: EmotionAnalysis[];
-  summary: string;
-  stats?: {
-    sceneCount: number;
-    objectCount: number;
-    avgSceneDuration: number;
-    sceneTypes: Record<string, number>;
-    objectCategories: Record<string, number>;
-    dominantEmotions: Record<string, number>;
-  };
-  createdAt: string;
-}
+// export interface VideoAnalysis {
+//   id: string;
+//   videoId: string;
+//   title?: string;
+//   duration?: number;
+//   scenes: Scene[];
+//   keyframes: Keyframe[];
+//   objects: ObjectDetection[];
+//   keyMoments?: KeyMoment[];
+//   emotions: EmotionAnalysis[];
+//   summary: string;
+//   stats?: {
+//     sceneCount: number;
+//     objectCount: number;
+//     avgSceneDuration: number;
+//     sceneTypes: Record<string, number>;
+//     objectCategories: Record<string, number>;
+//     dominantEmotions: Record<string, number>;
+//   };
+//   createdAt: string;
+// }
 
 export interface ScriptSegment {
   id: string;
