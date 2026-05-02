@@ -3,47 +3,37 @@
  * 统一的 AI 模型调用服务
  */
 
-
-
 import { getModelById } from '@/core/config/models.config';
 import { LLM_MODELS, DEFAULT_LLM_MODEL, MODEL_RECOMMENDATIONS } from '@/core/constants';
-import type { AIModel, AIModelSettings, ScriptData, VideoAnalysis, ScriptSegment, Scene, Keyframe } from '@/core/types';
 import { logger } from '@/core/utils/logger';
 
-// API 响应类型
-export interface AIResponse {
-  content: string;
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-  model: string;
-}
-
-// 流式响应回调
-export interface StreamCallbacks {
-  onChunk: (content: string, isFinal: boolean) => void;
-  onError?: (error: Error) => void;
-  onComplete?: () => void;
-}
-
-// 请求配置
-export interface RequestConfig {
-  model: string;
-  messages: Array<{ role: 'system' | 'user' | 'assistant'; content: string }>;
-  temperature?: number;
-  max_tokens?: number;
-  stream?: boolean;
-}
-
-// Mock 配置选项
-export interface MockConfig {
-  delay?: number;           // 响应延迟（毫秒）
-  content?: string;        // 自定义响应内容
-  shouldFail?: boolean;    // 是否模拟失败
-  errorMessage?: string;   // 错误消息
-}
+// Re-export shared types from centralized types file
+export type {
+  AIResponse,
+  RequestConfig,
+  StreamCallbacks,
+  MockConfig,
+  AIModel,
+  AIModelSettings,
+  ScriptData,
+  VideoAnalysis,
+  ScriptSegment,
+  Scene,
+  Keyframe
+} from './ai.service.types';
+import type {
+  AIModel,
+  AIModelSettings,
+  ScriptData,
+  VideoAnalysis,
+  ScriptSegment,
+  Scene,
+  Keyframe,
+  AIResponse,
+  RequestConfig,
+  StreamCallbacks,
+  MockConfig
+} from './ai.service.types';
 
 class AIService {
   private abortControllers: Map<string, AbortController> = new Map();
