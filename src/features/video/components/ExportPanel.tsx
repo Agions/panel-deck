@@ -12,6 +12,12 @@ import { logger } from '@/core/utils/logger';
 
 import styles from './ExportPanel.module.less';
 
+// Placeholder exportScript function until proper implementation is available
+const exportScript = async (_script: unknown, _format: string, _filename: string) => {
+  // TODO: Implement actual script export functionality
+  console.log('exportScript called with:', _script, _format, _filename);
+};
+
 // 导出脚本到文件
 const _getFormatIcon = (format: ExportFormat) => {
   switch (format) {

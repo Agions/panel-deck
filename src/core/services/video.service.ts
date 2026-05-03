@@ -194,8 +194,8 @@ class VideoService {
    */
   async analyzeVideo(videoInfo: VideoInfo): Promise<VideoAnalysis> {
     const [keyframes, scenes] = await Promise.all([
-      this.extractKeyframes(videoInfo.path, videoInfo.duration, 10),
-      this.detectScenes(videoInfo.path, videoInfo.duration)
+      this.extractKeyframes(videoInfo.path!!, videoInfo.duration!!, 10),
+      this.detectScenes(videoInfo.path!!, videoInfo.duration!!)
     ]);
 
     return {
@@ -205,7 +205,7 @@ class VideoService {
       keyframes,
       objects: [],
       emotions: [],
-      summary: `视频时长 ${this.formatDuration(videoInfo.duration)}，分辨率 ${videoInfo.width}x${videoInfo.height}，包含 ${scenes.length} 个场景。`,
+      summary: `视频时长 ${this.formatDuration(videoInfo.duration!)}，分辨率 ${videoInfo!.width}x${videoInfo!.height}，包含 ${scenes.length} 个场景。`,
       createdAt: new Date().toISOString()
     };
   }

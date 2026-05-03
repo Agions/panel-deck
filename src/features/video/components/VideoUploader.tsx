@@ -81,7 +81,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ onUploadSuccess, initialV
 
       // 创建一个视频预览URL
       const reader = new FileReader();
-      reader.readAsDataURL(file as File);
+      reader.readAsDataURL(_file as File);
       reader.onload = () => {
         setVideoUrl(reader.result as string);
         setProgress(100);

@@ -22,6 +22,7 @@
 
 export * from './video';
 export * from './script';
+export * from './project';
 export type { AIModelType, AIModelInfo } from './ai.models';
 export { AI_MODEL_INFO } from './ai.models';
 export type { AIModelSettings } from './ai.core';

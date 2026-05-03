@@ -322,7 +322,7 @@ export function useProjectList() {
     
     // 状态过滤
     if (filter.status.length > 0) {
-      result = result.filter(p => filter.status.includes(p.status));
+      result = result.filter(p => filter.status.includes(p.status!));
     }
     
     // 排序

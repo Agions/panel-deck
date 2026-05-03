@@ -90,6 +90,7 @@ export interface KeyframePipelineResult {
     style: string;
     generatedAt: number;
   };
+  videoFragments?: unknown[];
 }
 
 // 相机运动指南

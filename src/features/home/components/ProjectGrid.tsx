@@ -13,23 +13,14 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTheme } from '@/context/ThemeContext';
+import type { ProjectData } from '@/shared/types';
 import { cn } from '@/shared/utils/class-names';
 import { getStatusConfig, formatDate } from '@/shared/utils/format-ui';
 
 import styles from './ProjectGrid.module.less';
 
-export interface Project {
-  id: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-  status: 'draft' | 'processing' | 'completed' | 'archived';
-  thumbnail?: string;
-}
-
 interface ProjectGridProps {
-  projects: Project[];
+  projects: ProjectData[];
   loading: boolean;
   onRefresh?: () => void;
 }
@@ -120,8 +111,8 @@ const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, loading, onRefresh 
                 <CardContent className="pt-4">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <h4 className="font-medium truncate">{project.name}</h4>
-                    <Badge variant={getStatusConfig(project.status).variant}>
-                      {getStatusConfig(project.status).text}
+                    <Badge variant={getStatusConfig(project.status ?? 'draft').variant}>
+                      {getStatusConfig(project.status ?? 'draft').text}
                     </Badge>
                   </div>
                   <p className="text-sm text-muted-foreground line-clamp-2 mb-2">

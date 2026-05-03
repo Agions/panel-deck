@@ -9,6 +9,8 @@ export interface SceneDescription {
   aspectRatio: '16:9' | '9:16' | '4:3' | '1:1';
   duration: number;         // 秒
   characterConstraints?: CharacterConstraint[];  // 角色一致性约束
+  location?: string;
+  emotion?: string;
 }
 
 export interface CharacterConstraint {

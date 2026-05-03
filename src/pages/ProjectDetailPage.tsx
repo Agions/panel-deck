@@ -12,7 +12,7 @@ import {
   Zap,
   DollarSign,
 } from 'lucide-react';
-import React, { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -147,16 +147,16 @@ const ProjectDetail: React.FC = () => {
       }
       // 如果有小说元数据，加载它
       if (currentProject.novelMetadata) {
-        setNovelMetadata(currentProject.novelMetadata);
+        setNovelMetadata((currentProject.novelMetadata ?? null) as NovelMetadata);
       }
       if (Array.isArray(currentProject.storyboardComments) || Array.isArray(currentProject.storyboardVersions)) {
         collaborationService.hydrate(
           currentProject.id,
-          currentProject.storyboardComments ?? [],
-          currentProject.storyboardVersions ?? []
+          currentProject.storyboardComments as FrameComment[],
+          currentProject.storyboardVersions as StoryboardVersion[]
         );
       }
-      setStoryboardComments(collaborationService.listComments(currentProject.id));
+      setStoryboardComments(collaborationService.listComments(currentProject.id) as FrameComment[]);
       setStoryboardVersions(collaborationService.listVersions(currentProject.id));
     } else {
       toast.error('找不到项目信息');

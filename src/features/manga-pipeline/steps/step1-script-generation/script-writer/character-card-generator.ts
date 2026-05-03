@@ -60,6 +60,7 @@ export function generateCharacterCards(
       voiceSuggestion,
       relationships,
       firstAppearance: firstScene,
+      assetReferences: [],
     });
   });
 

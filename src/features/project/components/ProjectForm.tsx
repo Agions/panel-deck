@@ -2,13 +2,13 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
-import type { Project } from '@/types';
+import type { ProjectData } from '@/shared/types';
 
 import styles from './ProjectForm.module.less';
 
 interface ProjectFormProps {
-  initialValues?: Partial<Project>;
-  onSubmit: (values: Partial<Project>) => Promise<void>;
+  initialValues?: Partial<ProjectData>;
+  onSubmit: (values: Partial<ProjectData>) => Promise<void>;
   loading?: boolean;
 }
 
@@ -17,11 +17,11 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
   onSubmit,
   loading = false,
 }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm<Partial<Project>>({
+  const { register, handleSubmit, formState: { errors } } = useForm<Partial<ProjectData>>({
     defaultValues: initialValues,
   });
 
-  const handleFormSubmit = async (values: Partial<Project>) => {
+  const handleFormSubmit = async (values: Partial<ProjectData>) => {
     try {
       await onSubmit(values);
       toast.success('保存成功');

@@ -154,7 +154,7 @@ export function useVideo(): UseVideoReturn {
       const info = await getVideoInfo(file);
       
       // 生成缩略图
-      const thumbnail = await generateThumbnail(info.path);
+      const thumbnail = await generateThumbnail(info.path!);
       info.thumbnail = thumbnail;
       
       clearInterval(progressInterval);
@@ -215,11 +215,11 @@ export function useVideo(): UseVideoReturn {
       const analysisResult: VideoAnalysis = {
         id: uuidv4(),
         videoId,
-        scenes: generateMockScenes(video.duration),
-        keyframes: generateMockKeyframes(video.duration),
+        scenes: generateMockScenes(video.duration!),
+        keyframes: generateMockKeyframes(video.duration!),
         objects: [],
         emotions: [],
-        summary: `视频时长 ${formatDuration(video.duration)}，分辨率 ${video.width}x${video.height}，包含 ${Math.floor(video.duration / 30)} 个场景。`,
+        summary: `视频时长 ${formatDuration(video.duration!)}，分辨率 ${video.width!}x${video.height!}，包含 ${Math.floor(video.duration! / 30)} 个场景。`,
         createdAt: new Date().toISOString()
       };
       
@@ -253,11 +253,7 @@ export function useVideo(): UseVideoReturn {
       abortControllerRef.current.abort();
     }
     setIsAnalyzing(false);
-    setTaskStatus(prev => prev ? {
-      ...prev,
-      status: 'cancelled',
-      message: '已取消'
-    } : null);
+    setTaskStatus(prev => prev ? ({ ...prev, status: 'cancelled', message: '已取消' } as unknown as TaskStatus) : null);
   }, []);
   
   // 提取缩略图
@@ -265,7 +261,7 @@ export function useVideo(): UseVideoReturn {
     if (!video) return null;
     
     try {
-      return await generateThumbnail(video.path, timestamp);
+      return await generateThumbnail(video.path!, timestamp);
     } catch {
       setError('提取缩略图失败');
       return null;
@@ -277,7 +273,7 @@ export function useVideo(): UseVideoReturn {
     if (!video) return [];
     
     const keyframes: string[] = [];
-    const count = Math.floor(video.duration / interval);
+    const count = Math.floor(video.duration! / interval);
     
     for (let i = 0; i < count; i++) {
       const timestamp = i * interval;

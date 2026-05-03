@@ -3,7 +3,7 @@
  * 提供项目状态、徽章样式、日期格式化等公共函数
  */
 
-export type ProjectStatus = 'draft' | 'processing' | 'completed' | 'archived';
+export type ProjectStatus = 'draft' | 'processing' | 'completed' | 'archived' | 'failed';
 
 export interface StatusConfig {
   color: string;
@@ -36,6 +36,12 @@ export const STATUS_CONFIG: Record<ProjectStatus, StatusConfig> = {
     bgColor: 'bg-gray-100 dark:bg-gray-900/30', 
     text: '已归档',
     variant: 'outline' 
+  },
+  failed: { 
+    color: 'text-red-600', 
+    bgColor: 'bg-red-100 dark:bg-red-900/30', 
+    text: '失败',
+    variant: 'destructive' 
   }
 };
 

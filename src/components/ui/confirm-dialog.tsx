@@ -126,7 +126,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({ children, ..._props }) => (
   <ConfirmDialog {..._props}>{children}</ConfirmDialog>
 );
 
-const AlertDialogTrigger = ({ children, ..._props }: React.PropsWithChildren) => <>{children}</>;
+const AlertDialogTrigger = ({ children, asChild, ..._props }: React.PropsWithChildren & { asChild?: boolean }) => <>{children}</>;
 
 const AlertDialogContent: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
 const AlertDialogHeader: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
@@ -134,6 +134,6 @@ const AlertDialogTitle: React.FC<React.PropsWithChildren> = ({ children, ..._pro
 const AlertDialogDescription: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
 const AlertDialogFooter: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
 const AlertDialogCancel: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
-const AlertDialogAction: React.FC<React.PropsWithChildren> = ({ children, ..._props }) => <>{children}</>;
+const AlertDialogAction: React.FC<React.PropsWithChildren & { onClick?: () => void }> = ({ children, ..._props }) => <>{children}</>;
 
 export { ConfirmDialog, Popconfirm, AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction }

@@ -122,7 +122,7 @@ class VideoAnalysisService {
    */
   async extractKeyframes(videoInfo: VideoInfo, count: number = 10): Promise<Keyframe[]> {
     const keyframes: Keyframe[] = [];
-    const duration = videoInfo.duration;
+    const duration = videoInfo.duration!;
     const interval = duration / (count + 1);
 
     for (let i = 1; i <= count; i++) {
@@ -147,13 +147,13 @@ class VideoAnalysisService {
     const scenes: Scene[] = [];
     const duration = videoInfo.duration;
     const avgSceneDuration = 30; // 平均场景时长
-    const sceneCount = Math.max(1, Math.floor(duration / avgSceneDuration));
+    const sceneCount = Math.max(1, Math.floor(duration! / avgSceneDuration));
 
     const sceneTypeSamples = SCENE_TYPES.slice(0, 5);
 
     for (let i = 0; i < sceneCount; i++) {
       const startTime = Math.round(i * avgSceneDuration);
-      const endTime = Math.min(Math.round((i + 1) * avgSceneDuration), duration);
+      const endTime = Math.min(Math.round((i + 1) * avgSceneDuration), duration!);
 
       // 随机分配场景类型
       const sceneType = sceneTypeSamples[i % sceneTypeSamples.length] as SceneType;
@@ -260,8 +260,8 @@ class VideoAnalysisService {
       const prompt = `请为以下视频生成一个简洁的内容摘要：
 
 视频信息：
-- 时长：${this.formatTime(videoInfo.duration)}
-- 分辨率：${videoInfo.width}x${videoInfo.height}
+- 时长：${this.formatTime(videoInfo.duration!)}
+- 分辨率：${videoInfo!.width}x${videoInfo!.height}
 - 格式：${videoInfo.format}
 
 场景分析：
@@ -292,7 +292,7 @@ ${this.groupByCategory(analysis.objects || []).map(([cat, objs]) => `- ${cat}: $
     const sceneCount = analysis.scenes?.length ?? 0;
     const objectTypes = Object.keys(analysis.stats?.objectCategories ?? {});
 
-    return `视频时长 ${this.formatTime(videoInfo.duration)}，分辨率 ${videoInfo.width}x${videoInfo.height}。` +
+    return `视频时长 ${this.formatTime(videoInfo.duration!)}，分辨率 ${videoInfo.width}x${videoInfo.height}。` +
       `包含 ${sceneCount} 个场景${objectTypes.length > 0 ? `，主要元素包括 ${objectTypes.slice(0, 3).join('、')}` : ''}。`;
   }
 

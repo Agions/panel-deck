@@ -194,7 +194,7 @@ export const useProjectStore = create<ProjectState>()(
             p.id === projectId
               ? {
                   ...p,
-                  scripts: [...p.scripts, script],
+                  scripts: [...(p.scripts ?? []), script],
                   updatedAt: new Date().toISOString()
                 }
               : p
@@ -220,7 +220,7 @@ export const useProjectStore = create<ProjectState>()(
             p.id === projectId
               ? {
                   ...p,
-                  scripts: p.scripts.map(s =>
+                  scripts: (p.scripts ?? []).map(s =>
                     s.id === scriptId ? { ...s, ...updates, updatedAt: new Date().toISOString() } : s
                   ),
                   updatedAt: new Date().toISOString()
@@ -248,7 +248,7 @@ export const useProjectStore = create<ProjectState>()(
             p.id === projectId
               ? {
                   ...p,
-                  scripts: p.scripts.filter(s => s.id !== scriptId),
+                  scripts: (p.scripts ?? []).filter(s => s.id !== scriptId),
                   updatedAt: new Date().toISOString()
                 }
               : p
@@ -275,7 +275,7 @@ export const useProjectStore = create<ProjectState>()(
             p.id === projectId
               ? {
                   ...p,
-                  videos: [...p.videos, video],
+                  videos: [...(p.videos ?? []), video],
                   updatedAt: new Date().toISOString()
                 }
               : p
@@ -301,7 +301,7 @@ export const useProjectStore = create<ProjectState>()(
             p.id === projectId
               ? {
                   ...p,
-                  videos: p.videos.filter(v => v.id !== videoId),
+                  videos: (p.videos ?? []).filter(v => v.id !== videoId),
                   updatedAt: new Date().toISOString()
                 }
               : p

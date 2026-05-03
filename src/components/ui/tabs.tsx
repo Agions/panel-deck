@@ -35,12 +35,13 @@ const Tabs = React.forwardRef<
   const panes: { key: string; tab?: React.ReactNode; children?: React.ReactNode }[] = [];
   const otherChildren: React.ReactNode[] = [];
 
-  React.Children.forEach(children, (child: React.ReactElement) => {
-    if (child?.type?.displayName === 'TabPane') {
+  React.Children.forEach(children, (child) => {
+    if (React.isValidElement(child) && typeof child.type === 'object' && child.type !== null && (child.type as { displayName?: string }).displayName === 'TabPane') {
+      const tabChild = child as React.ReactElement<{key?: string; tab?: React.ReactNode; children?: React.ReactNode}>;
       panes.push({
-        key: child.props.key ?? '',
-        tab: child.props.tab,
-        children: child.props.children,
+        key: tabChild.props.key ?? '',
+        tab: tabChild.props.tab,
+        children: tabChild.props.children,
       });
     } else {
       otherChildren.push(child);

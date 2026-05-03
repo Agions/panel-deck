@@ -1,6 +1,8 @@
 /**
  * AI 模型类型
  */
+import type { Script } from '../../shared/types/script';
+
 export type AIModelType = 'wenxin' | 'qianwen' | 'spark' | 'chatglm' | 'doubao' | 'deepseek';
 
 /**
@@ -95,16 +97,67 @@ export interface AppSettings {
 /**
  * 项目数据
  */
+/**
+ * 项目数据
+ */
 export interface ProjectData {
   id: string;
   name: string;
-  description: string;
-  videoPath: string;
+  description?: string;
+  status?: 'draft' | 'processing' | 'completed' | 'failed';
+  videos?: VideoInfo[];
+  scripts?: Script[];
+  settings?: ProjectSettings;
   createdAt: string;
   updatedAt: string;
   metadata?: unknown;
   keyFrames?: string[];
-  script?: unknown[];
+  coverImage?: string;
+  videoPath?: string;
+  thumbnail?: string;
+  novelMetadata?: unknown;
+  storyboardComments?: unknown[];
+  storyboardVersions?: unknown[];
+}
+
+/**
+ * 项目设置
+ */
+export interface ProjectSettings {
+  videoQuality?: 'low' | 'medium' | 'high';
+  outputFormat?: 'mp4' | 'webm' | 'gif';
+  resolution?: '480p' | '720p' | '1080p' | '4k';
+  frameRate?: number;
+  audioCodec?: string;
+  videoCodec?: string;
+  subtitleEnabled?: boolean;
+  subtitleStyle?: {
+    fontFamily?: string;
+    fontSize?: number;
+    color?: string;
+    backgroundColor?: string;
+    outline?: boolean;
+    outlineColor?: string;
+    position?: 'top' | 'bottom' | 'center';
+    alignment?: 'left' | 'center' | 'right';
+  };
+}
+
+/**
+ * 视频信息
+ */
+export interface VideoInfo {
+  id: string;
+  path?: string;
+  name: string;
+  duration?: number;
+  width?: number;
+  height?: number;
+  fps?: number;
+  format?: string;
+  size?: number;
+  thumbnail?: string;
+  createdAt?: string;
 }
 
 /**
@@ -119,30 +172,8 @@ export interface VideoMetadata {
   bitrate?: number;
 }
 
-/**
- * 脚本类型
- */
-export interface Script {
-  id: string;
-  title: string;
-  content: string;
-  segments: ScriptSegment[];
-  createdAt: string;
-  updatedAt: string;
-  videoId?: string;
-  modelUsed?: string;
-}
-
-/**
- * 脚本片段
- */
-export interface ScriptSegment {
-  id: string;
-  startTime: number;
-  endTime: number;
-  content: string;
-  type: 'narration' | 'dialogue' | 'action';
-}
+// Re-export from shared for backward compatibility
+export type { Script, ScriptSegment, ScriptMetadata } from '../../shared/types/script';
 
 /**
  * 时间线

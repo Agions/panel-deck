@@ -272,8 +272,8 @@ class ProjectImportExportService {
       createdAt: now,
       updatedAt: now,
       // 深拷贝子对象
-      videos: project.videos.map(v => ({ ...v })),
-      scripts: project.scripts.map(s => ({
+      videos: project.videos!.map(v => ({ ...v })),
+      scripts: project.scripts!.map(s => ({
         ...s,
         id: uuidv4(),
         createdAt: now,
@@ -303,12 +303,12 @@ class ProjectImportExportService {
       differences.push('描述已修改');
     }
 
-    if (project1.videos.length !== project2.videos.length) {
-      differences.push(`视频数量: ${project1.videos.length} -> ${project2.videos.length}`);
+    if (project1.videos!.length !== project2.videos!.length) {
+      differences.push(`视频数量: ${project1.videos!.length} -> ${project2.videos!.length}`);
     }
 
-    if (project1.scripts.length !== project2.scripts.length) {
-      differences.push(`脚本数量: ${project1.scripts.length} -> ${project2.scripts.length}`);
+    if (project1.scripts!.length !== project2.scripts!.length) {
+      differences.push(`脚本数量: ${project1.scripts!.length} -> ${project2.scripts!.length}`);
     }
 
     return {
@@ -324,7 +324,7 @@ class ProjectImportExportService {
     return {
       ...project,
       // 移除不必要的字段
-      videos: project.videos.map(v => ({
+      videos: project.videos!.map(v => ({
         ...v,
         // 不导出本地路径
         path: v.path ? '[导出时移除]' : v.path,
@@ -348,7 +348,7 @@ class ProjectImportExportService {
       createdAt: project.createdAt || now,
       updatedAt: now,
       // 处理视频
-      videos: project.videos.map(v => ({
+      videos: project.videos!.map(v => ({
         ...v,
         // 重置视频路径
         path: '',

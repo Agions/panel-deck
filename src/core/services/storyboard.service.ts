@@ -6,7 +6,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { logger } from '@/core/utils/logger';
-import type { StoryboardFrame } from '@/shared/types';
+import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
 import { aiService } from './ai.service';
 import { imageGenerationService, type ImageGenerationOptions } from './image-generation.service';

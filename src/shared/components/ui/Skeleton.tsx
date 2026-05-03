@@ -63,6 +63,7 @@ export interface CardSkeletonProps {
   actions?: boolean;
   active?: boolean;
   className?: string;
+  [key: string]: unknown;
 }
 
 export const CardSkeleton: React.FC<CardSkeletonProps> = ({
@@ -95,6 +96,7 @@ export interface ListSkeletonProps {
   actions?: boolean;
   active?: boolean;
   className?: string;
+  [key: string]: unknown;
 }
 
 export const ListSkeleton: React.FC<ListSkeletonProps> = ({
@@ -128,6 +130,7 @@ export interface FormSkeletonProps {
   button?: boolean;
   active?: boolean;
   className?: string;
+  [key: string]: unknown;
 }
 
 export const FormSkeleton: React.FC<FormSkeletonProps> = ({
@@ -165,6 +168,7 @@ export interface StatisticSkeletonProps {
   value?: boolean;
   active?: boolean;
   className?: string;
+  [key: string]: unknown;
 }
 
 export const StatisticSkeleton: React.FC<StatisticSkeletonProps> = ({
