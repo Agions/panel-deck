@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "false"
+
 jobs:
   lint:
     name: Lint
@@ -16,18 +19,22 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+      - name: Get npm cache path
+        id: npm-cache
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+      - name: Cache npm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - run: npm ci --legacy-peer-deps
       - name: Run ESLint
-        run: |
-          echo "=== node version ==="
-          node --version
-          echo "=== npm version ==="
-          npm --version
-          echo "=== pwd ==="
-          pwd
-          echo "=== npm run lint ==="
-          npm run lint -- --max-warnings 999
+        run: npm run lint
 
   test:
     name: Tests
@@ -36,7 +43,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+      - name: Get npm cache path
+        id: npm-cache-test
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+      - name: Cache npm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache-test.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - run: npm ci --legacy-peer-deps
       - run: npm test -- --runInBand --coverage
 
@@ -47,36 +66,21 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-      - name: Cache Vite build
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+      - name: Get npm cache path
+        id: npm-cache-build
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+      - name: Cache npm cache
         uses: actions/cache@v4
         with:
-          path: |
-            node_modules/.vite
-            .vite
-          key: ${{ runner.os }}-vite-${{ hashFiles('package-lock.json') }}
+          path: ${{ steps.npm-cache-build.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-vite-
-      - name: Cache TypeScript build
-        uses: actions/cache@v4
-        with:
-          path: .tsbuildinfo
-          key: ${{ runner.os }}-tsc-${{ hashFiles('src/**/*.ts', 'src/**/*.tsx', 'tsconfig.json') }}
-          restore-keys: |
-            ${{ runner.os }}-tsc-
+            ${{ runner.os }}-npm-
       - run: npm ci --legacy-peer-deps
-      - name: Run npm run build
-        run: |
-          echo "=== node version ==="
-          node --version
-          echo "=== npm version ==="
-          npm --version
-          echo "=== pwd ==="
-          pwd
-          echo "=== running build ==="
-          npm run build
-          echo "=== dist dir ==="
-          ls -la dist/
+      - run: npm run build
 
   coverage:
     name: Coverage
@@ -86,7 +90,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+      - name: Get npm cache path
+        id: npm-cache-coverage
+        run: echo "dir=$(npm config get cache)" >> $GITHUB_OUTPUT
+      - name: Cache npm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache-coverage.outputs.dir }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-
       - run: npm ci --legacy-peer-deps
       - name: Run tests with coverage
         run: npm test -- --runInBand --coverage --coverageThreshold='{"global":{"branches":20,"functions":20,"lines":25,"statements":20}}'
