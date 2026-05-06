@@ -66,10 +66,18 @@ export function deepClone<T>(obj: T): T {
 }
 
 /**
- * 生成唯一 ID
+ * 生成唯一 ID - 使用 crypto API 替代 Math.random()
+ * 性能更好，碰撞概率更低
  */
 export function generateId(): string {
-  return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+  // 使用 crypto.randomUUID() (ES2021+), 降级到时间戳+随机数
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // 降级方案: 时间戳 + 高随机性随机数
+  const timestamp = Date.now().toString(36);
+  const randomPart = Math.random().toString(36).substring(2, 15);
+  return `${timestamp}_${randomPart}`;
 }
 
 /**
