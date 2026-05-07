@@ -114,7 +114,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          assets: ${{ needs.build-windows-x64.outputs.artifact_name }}
+          files: ${{ needs.build-windows-x64.outputs.artifact_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -165,7 +165,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          assets: ${{ needs.build-windows-arm64.outputs.artifact_name }}
+          files: ${{ needs.build-windows-arm64.outputs.artifact_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -211,7 +211,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          assets: ${{ needs.build-macos.outputs.artifact_name }}
+          files: ${{ needs.build-macos.outputs.artifact_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -268,7 +268,7 @@ jobs:
         with:
           tag_name: ${{ needs.prepare.outputs.tag }}
           draft: true
-          assets: ${{ needs.build-linux.outputs.artifact_name }}
+          files: ${{ needs.build-linux.outputs.artifact_name }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
