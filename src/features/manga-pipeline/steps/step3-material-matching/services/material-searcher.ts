@@ -60,7 +60,7 @@ export async function batchSearch(
 
   for (let i = 0; i < scenes.length; i += CONCURRENCY) {
     const batch = scenes.slice(i, i + CONCURRENCY);
-    const batchResults = await Promise.all(
+    const batchResults = await Promise.allSettled(
       batch.map(async (scene) => {
         const query = buildSearchQuery(scene);
         const matches = await searchMaterial(scene, query);
@@ -86,9 +86,20 @@ export async function batchSearch(
       })
     );
 
-    // 写入结果
-    batchResults.forEach((r, idx) => {
-      results[i + idx] = r;
+    // 处理结果（包括失败的）
+    batchResults.forEach((result, idx) => {
+      if (result.status === 'fulfilled') {
+        results[i + idx] = result.value;
+      } else {
+        // 失败时返回空匹配，标记为 AI 生成
+        results[i + idx] = {
+          sceneId: batch[idx].sceneId,
+          sceneNumber: batch[idx].sceneNumber,
+          matches: [],
+          fallback: 'ai_generate',
+          confidence: 0,
+        };
+      }
     });
   }
 

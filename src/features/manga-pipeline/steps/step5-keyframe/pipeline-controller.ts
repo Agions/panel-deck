@@ -1,6 +1,6 @@
 /**
  * KeyframePipeline - 关键帧驱动生成流程
- * 
+ *
  * 参考 deep-printfilm 的关键帧驱动方法：
  * 1. 生成首帧 (start frame)
  * 2. 生成尾帧 (end frame)
@@ -14,18 +14,17 @@ import {
   generateImage,
   generateVideo,
   type ImageGenerationOptions,
-  type VideoGenerationOptions
+  type VideoGenerationOptions,
 } from '@/core/services/image-generation.service';
 
 import { BasePipelineController } from '../../base/BasePipelineController';
 
-
 export enum MotionType {
-  FADE = 'fade',           // 淡入淡出
-  SLIDE = 'slide',         // 滑动
-  ZOOM = 'zoom',           // 缩放
-  PAN = 'pan',             // 平移
-  ROTATE = 'rotate',       // 旋转
+  FADE = 'fade', // 淡入淡出
+  SLIDE = 'slide', // 滑动
+  ZOOM = 'zoom', // 缩放
+  PAN = 'pan', // 平移
+  ROTATE = 'rotate', // 旋转
   CROSSFADE = 'crossfade', // 交叉淡入淡出
 }
 
@@ -135,12 +134,9 @@ export const MOTION_TYPE_SUGGESTIONS: Record<MotionType, string[]> = {
 /**
  * 分析场景特征，推荐合适的运动类型
  */
-export function suggestMotionType(
-  sceneDescription: string,
-  emotion?: string
-): MotionType {
+export function suggestMotionType(sceneDescription: string, emotion?: string): MotionType {
   const desc = sceneDescription.toLowerCase();
-  
+
   if (desc.includes('淡') || desc.includes('fade') || desc.includes('回忆')) {
     return MotionType.FADE;
   }
@@ -159,7 +155,7 @@ export function suggestMotionType(
   if (desc.includes('融合') || desc.includes('梦幻') || desc.includes('dream')) {
     return MotionType.CROSSFADE;
   }
-  
+
   // 根据情绪默认选择
   if (emotion === 'tense' || emotion === 'angry') {
     return MotionType.ZOOM;
@@ -167,7 +163,7 @@ export function suggestMotionType(
   if (emotion === 'sad') {
     return MotionType.FADE;
   }
-  
+
   return MotionType.CROSSFADE;
 }
 
@@ -180,7 +176,7 @@ export function estimateSceneDuration(scene: KeyframeScene): number {
 
 /**
  * 创建关键帧场景（并发生成首帧+尾帧）
- * 
+ *
  * 优化点：
  * 1. 首帧和尾帧并发生成（不是串行等待）
  * 2. 支持传入角色参考图用于视频生成绑定
@@ -208,29 +204,34 @@ export async function createKeyframeScene(
     signal,
   } = options;
 
-  // 并发生成首帧和尾帧
-  const [startFrameResult, endFrameResult] = await Promise.all([
-    generateImage(
-      buildFramePrompt(scene, 0, 'start'),
-      {
-        model: (imageOptions.model as ImageGenerationOptions['model']) || 'seedream-5.0',
-        size: '2K',
-        style: style as ImageGenerationOptions['style'],
-        ...imageOptions,
-        signal,
-      }
-    ),
-    generateImage(
-      buildFramePrompt(scene, 1, 'end'),
-      {
-        model: (imageOptions.model as ImageGenerationOptions['model']) || 'seedream-5.0',
-        size: '2K',
-        style: style as ImageGenerationOptions['style'],
-        ...imageOptions,
-        signal,
-      }
-    ),
-  ]);
+  // 并发生成首帧和尾帧（使用 Promise.allSettled 防止一个失败影响另一个）
+  const [startFrameResult, endFrameResult] = await Promise.allSettled([
+    generateImage(buildFramePrompt(scene, 0, 'start'), {
+      model: (imageOptions.model as ImageGenerationOptions['model']) || 'seedream-5.0',
+      size: '2K',
+      style: style as ImageGenerationOptions['style'],
+      ...imageOptions,
+      signal,
+    }),
+    generateImage(buildFramePrompt(scene, 1, 'end'), {
+      model: (imageOptions.model as ImageGenerationOptions['model']) || 'seedream-5.0',
+      size: '2K',
+      style: style as ImageGenerationOptions['style'],
+      ...imageOptions,
+      signal,
+    }),
+  ]).then((results) => {
+    // 验证两个都成功
+    const start = results[0];
+    const end = results[1];
+    if (start.status === 'rejected') {
+      throw new Error(`首帧生成失败: ${start.reason}`);
+    }
+    if (end.status === 'rejected') {
+      throw new Error(`尾帧生成失败: ${end.reason}`);
+    }
+    return [start.value, end.value] as [typeof start.value, typeof end.value];
+  });
 
   // 构建带角色约束的帧 prompt
   const startPrompt = buildFramePrompt(scene, 0, 'start');
@@ -276,16 +277,16 @@ function buildFramePrompt(
   frameType: 'start' | 'end'
 ): string {
   const basePrompt = `${scene.description}, ${scene.location}`;
-  
+
   // 帧类型描述
-  const frameHint = frameType === 'start'
-    ? '起始画面, character in standing pose, stable composition'
-    : 'ending frame, motion continues naturally from previous scene';
+  const frameHint =
+    frameType === 'start'
+      ? '起始画面, character in standing pose, stable composition'
+      : 'ending frame, motion continues naturally from previous scene';
 
   // 角色约束（如果有）
-  const charHint = scene.description.length > 0
-    ? 'maintain consistent character appearance across frames'
-    : '';
+  const charHint =
+    scene.description.length > 0 ? 'maintain consistent character appearance across frames' : '';
 
   const parts = [basePrompt, frameHint, charHint, `第${frameIndex + 1}帧`].filter(Boolean);
   return parts.join(', ');
@@ -294,15 +295,11 @@ function buildFramePrompt(
 /**
  * 创建占位帧（实际生成时替换）
  */
-function createPlaceholderFrame(
-  id: string,
-  style: string,
-  aspectRatio: string
-): GeneratedFrame {
+function createPlaceholderFrame(id: string, style: string, aspectRatio: string): GeneratedFrame {
   const [w, h] = aspectRatio.split(':').map(Number);
   const width = 1024;
-  const height = Math.round(1024 * h / w);
-  
+  const height = Math.round((1024 * h) / w);
+
   return {
     id,
     imageUrl: '', // 实际生成时填充
@@ -315,7 +312,7 @@ function createPlaceholderFrame(
 
 /**
  * KeyframePipeline - 关键帧驱动流水线（并发生成版）
- * 
+ *
  * 优化点：
  * 1. 多个场景并发生成（非串行等待）
  * 2. 首帧+尾帧并发生成
@@ -325,12 +322,7 @@ export class KeyframePipeline extends BasePipelineController {
   id = 'keyframe-pipeline';
   name = 'Keyframe-Driven Generation';
 
-  protected subSteps = [
-    '分析场景',
-    '生成关键帧',
-    '分析运动',
-    '合成视频',
-  ];
+  protected subSteps = ['分析场景', '生成关键帧', '分析运动', '合成视频'];
 
   protected async _doProcess(input: StepInput): Promise<StepOutput> {
     const {
@@ -357,7 +349,7 @@ export class KeyframePipeline extends BasePipelineController {
         aspectRatio,
         imageOptions: { model: 'seedream-5.0' },
         characterReferences,
-      }).then(result => {
+      }).then((result) => {
         // 更新进度
         this.updateProgress(
           5 + ((index + 1) / sceneCount) * 35,
@@ -367,12 +359,26 @@ export class KeyframePipeline extends BasePipelineController {
       })
     );
 
-    const keyframeScenes = await Promise.all(keyframeScenePromises);
+    const keyframeSceneResults = await Promise.allSettled(keyframeScenePromises);
+
+    // 检查是否有失败
+    const failures = keyframeSceneResults
+      .map((r, i) => (r.status === 'rejected' ? i : null))
+      .filter((i): i is number => i !== null);
+
+    if (failures.length > 0) {
+      const msg = failures.map((i) => `场景${i + 1}失败`).join(', ');
+      throw new Error(`关键帧生成部分失败: ${msg}`);
+    }
+
+    const keyframeScenes = keyframeSceneResults.map(
+      (r) => (r as PromiseFulfilledResult<KeyframeScene>).value
+    );
 
     // ========== 阶段2：分析运动类型 ==========
     this.updateProgress(42, '分析运动');
-    keyframeScenes.forEach(scene => {
-      scene.keyframes.forEach(kf => {
+    keyframeScenes.forEach((scene) => {
+      scene.keyframes.forEach((kf) => {
         kf.motionType = suggestMotionType(scene.description, undefined);
         kf.cameraMovement = CameraMovement.STATIC;
       });
@@ -380,7 +386,7 @@ export class KeyframePipeline extends BasePipelineController {
 
     // ========== 阶段3：并发生成视频片段 ==========
     this.updateProgress(45, '生成视频');
-    
+
     const videoPromises = keyframeScenes.map((scene, i) =>
       Promise.all(
         scene.keyframes.map(async (kf) => {
@@ -405,14 +411,20 @@ export class KeyframePipeline extends BasePipelineController {
       )
     );
 
-    await Promise.all(videoPromises);
+    await Promise.allSettled(videoPromises).then((results) => {
+      // 收集失败信息但继续处理
+      const failures = results
+        .map((r, i) => (r.status === 'rejected' ? i : null))
+        .filter((i): i is number => i !== null);
+
+      if (failures.length > 0) {
+        console.warn(`[KeyframePipeline] ${failures.length} 个视频生成失败`);
+      }
+    });
 
     this.updateProgress(95, '后处理');
 
-    const totalDuration = keyframeScenes.reduce(
-      (sum, scene) => sum + scene.totalDuration,
-      0
-    );
+    const totalDuration = keyframeScenes.reduce((sum, scene) => sum + scene.totalDuration, 0);
 
     this.updateProgress(100, '完成');
 
@@ -458,7 +470,7 @@ function buildVideoPrompt(
   // 注入角色约束（如果有）
   if (characterReferences && characterReferences.length > 0) {
     const charPrompts = characterReferences
-      .map(c => `${c.name}: ${c.referencePrompt}`)
+      .map((c) => `${c.name}: ${c.referencePrompt}`)
       .join(' | ');
     parts.push(`maintain character consistency: ${charPrompts}`);
   }
