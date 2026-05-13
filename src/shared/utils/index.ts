@@ -410,110 +410,120 @@ export const formatDateTime = (date: Date | string): string => {
 };
 
 export interface FormatTimeOptions {
-  /** 显示小时: true=始终显示, false=不显示, 'auto'=仅>0时显示(默认false) */
-  hours?: boolean | 'auto';
-  /** 毫秒位数: 0=无, 1=十分之一秒(.X), 2=百分之一秒(.XX), 3=毫秒(.mmm) */
+  /**
+   * 小时显示模式:
+   *  'never'   = 不显示小时（默认）
+   *  'if-nonzero' = 仅在 hours>0 时显示（H:MM:SS，不补0）
+   *  'always'  = 始终显示小时（HH:MM:SS，始终补0）
+   */
+  hours?: 'never' | 'if-nonzero' | 'always';
+  /**
+   * 毫秒位数: 0=无, 1=十分之一秒, 2=百分之一秒, 3=毫秒
+   * 默认 0
+   */
   ms?: 0 | 1 | 2 | 3;
-  /** 数字进位取整方式，默认 Math.floor */
+  /**
+   * 时分秒之间的分隔符，默认 ':'
+   * 例如 H:MM:SS / HH:MM:SS
+   */
+  separator?: string;
+  /**
+   * 秒与毫秒之间的分隔符（仅 ms>0 时生效），默认 '.'
+   * ASS 用 '.'，SRT 用 ','，VTT 用 '.'
+   */
+  decimalMark?: string;
+  /**
+   * 数字进位取整方式，默认 Math.floor
+   */
   round?: 'floor' | 'round' | 'ceil';
 }
 
 /**
  * 统一时间格式化
- * @example formatTime(90)                           → "01:30"
- * @example formatTime(90, { hours: true })         → "00:01:30"
- * @example formatTime(90.5, { ms: 1 })              → "01:30.5"
- * @example formatTime(3661.5, { hours: 'auto' })    → "1:01:01.5"
+ * @example formatTime(90)                              → "01:30"
+ * @example formatTime(90, { hours: 'always' })         → "00:01:30"
+ * @example formatTime(90.5, { ms: 1 })                 → "01:30.5"
+ * @example formatTime(3661.5, { hours: 'if-nonzero', ms: 1 }) → "1:01:01.5"
  */
 export function formatTime(seconds: number, opts: FormatTimeOptions = {}): string {
-  const { hours = false, ms = 0, round = 'floor' } = opts;
-  if (isNaN(seconds) || seconds < 0) return ms > 0 ? '00:00.' + '0'.repeat(ms) : '00:00';
+  const { hours = 'never', ms = 0, separator = ':', decimalMark = '.', round = 'floor' } = opts;
+  if (isNaN(seconds) || seconds < 0) return `00:00${ms > 0 ? decimalMark + '0'.repeat(ms) : ''}`;
 
-  let s: number, m: number, h: number, fractional: number;
+  const roundFn = round === 'ceil' ? Math.ceil : round === 'round' ? Math.round : Math.floor;
 
-  if (ms === 0) {
-    s = Math.floor(seconds % 60);
-    m = Math.floor(seconds / 60);
-    h = Math.floor(m / 60);
-    if (hours !== false) m = m % 60;
-    fractional = 0;
-  } else {
-    // Round only the fractional part of seconds, then decompose
+  let totalSecs = Math.floor(seconds);
+  let fractional = 0;
+
+  if (ms > 0) {
     const base = ms === 3 ? 1000 : ms === 2 ? 100 : 10;
-    const secFrac = (seconds % 1) * base;
-    const roundedFrac = Math.round(secFrac);
+    const secFrac = (seconds - totalSecs) * base;
+    const roundedFrac = roundFn(secFrac);
     const carry = roundedFrac >= base ? 1 : 0;
-    const fracPart = roundedFrac % base;
-    const totalSecs = Math.floor(seconds) + carry;
-    s = totalSecs % 60;
-    const totalMins = Math.floor(totalSecs / 60);
-    h = Math.floor(totalMins / 60);
-    if (hours === false) m = totalMins;
-    else m = totalMins % 60;
-    fractional = fracPart;
+    fractional = roundedFrac % base;
+    // 只有当 ms>0 时，round 才影响总秒（通过进位），不影响分解方式
+    if (carry > 0) totalSecs += carry;
+  } else {
+    // ms=0 时，round 决定总秒如何分解
+    totalSecs = roundFn(seconds);
   }
+
+  const s = totalSecs % 60;
+  const totalMins = Math.floor(totalSecs / 60);
+  const h = Math.floor(totalMins / 60);
 
   const pad = (n: number, len = 2) => String(n).padStart(len, '0');
-  const padFrac = (n: number) => {
-    if (ms === 0) return '';
-    if (ms === 1) return `.${n}`;
-    if (ms === 2) return `.${pad(n)}`;
-    return `.${pad(n, 3)}`;
-  };
 
-  const frac = ms > 0 ? padFrac(fractional) : '';
-  const secs = `${pad(s)}${frac}`;
+  let m: number;
+  let hourStr = '';
+  if (hours === 'always') {
+    m = totalMins % 60;
+    hourStr = `${pad(h)}${separator}`;
+  } else if (hours === 'if-nonzero') {
+    m = totalMins % 60; // 保持分钟在 0-59 范围
+    hourStr = h > 0 ? `${h}${separator}` : '';
+  } else {
+    // 'never'
+    m = totalMins;
+  }
 
-  if (hours === true) {
-    return `${pad(h)}:${pad(m)}:${secs}`;
-  }
-  if (hours === 'auto') {
-    return h > 0 ? `${h}:${pad(m)}:${secs}` : `${pad(m)}:${secs}`;
-  }
-  return `${pad(m)}:${secs}`;
+  const fracStr =
+    ms > 0
+      ? `${decimalMark}${ms === 1 ? String(fractional) : pad(ms === 3 ? fractional : fractional, ms === 2 ? 2 : 3)}`
+      : '';
+
+  return `${hourStr}${pad(m)}${separator}${pad(s)}${fracStr}`;
 }
 
-/** @deprecated 请使用 formatTime(seconds, { hours: true }) */
-export const formatTimeHMS = (seconds: number): string => formatTime(seconds, { hours: true });
+/** @deprecated 请使用 formatTime(seconds, { hours: 'always' }) */
+export const formatTimeHMS = (seconds: number): string => formatTime(seconds, { hours: 'always' });
 
 /** @deprecated 请使用 formatTime(seconds, { ms: 1 }) */
 export const formatTimeWithMs = (seconds: number): string => formatTime(seconds, { ms: 1 });
 
 /** @deprecated 请使用 formatTime(seconds, { ms: 2 }) */
-export const formatTimeWithCentiseconds = (seconds: number): string => formatTime(seconds, { ms: 2 });
+export const formatTimeWithCentiseconds = (seconds: number): string =>
+  formatTime(seconds, { ms: 2 });
 
 /**
  * 格式化 ASS 字幕时间 (H:MM:SS.cc，百分之一秒)
+ * @deprecated 请使用 formatTime(seconds, { hours: 'if-nonzero', ms: 2, decimalMark: '.' })
  */
-export const formatASSTime = (seconds: number): string => {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const cs = Math.floor((seconds % 1) * 100);
-  return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(cs).padStart(2, '0')}`;
-};
+export const formatASSTime = (seconds: number): string =>
+  formatTime(seconds, { hours: 'if-nonzero', ms: 2, decimalMark: '.' });
 
 /**
  * 格式化 VTT 字幕时间 (HH:MM:SS.mmm，毫秒)
+ * @deprecated 请使用 formatTime(seconds, { hours: 'always', ms: 3 })
  */
-export const formatVTTTime = (seconds: number): string => {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const ms = Math.floor((seconds % 1) * 1000);
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}.${String(ms).padStart(3, '0')}`;
-};
+export const formatVTTTime = (seconds: number): string =>
+  formatTime(seconds, { hours: 'always', ms: 3 });
 
 /**
- * 将秒数格式化为 SRT 字幕时间格式 (hh:mm:ss,mmm)
+ * 将秒数格式化为 SRT 字幕时间格式 (HH:MM:SS,mmm)
+ * @deprecated 请使用 formatTime(seconds, { hours: 'always', ms: 3, decimalMark: ',' })
  */
-export const formatSRTTime = (seconds: number): string => {
-  const h = Math.floor(seconds / 3600);
-  const m = Math.floor((seconds % 3600) / 60);
-  const s = Math.floor(seconds % 60);
-  const ms = Math.floor((seconds % 1) * 1000);
-  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')},${String(ms).padStart(3, '0')}`;
-};
+export const formatSRTTime = (seconds: number): string =>
+  formatTime(seconds, { hours: 'always', ms: 3, decimalMark: ',' });
 
 /**
  * 将秒数格式化为hh:mm:ss的时间格式
