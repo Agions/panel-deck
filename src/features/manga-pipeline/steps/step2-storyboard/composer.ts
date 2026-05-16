@@ -5,9 +5,8 @@ import {
   buildCharacterConstraints,
   type CharacterIllustration,
   type EnhancedCharacterConstraint,
-  generateSceneDescription,
-  type SceneDescription,
-} from './description/character-illustration-generator';
+} from './description/char-illustrator';
+import { generateSceneDescription, type SceneDescription } from './description/scene-describer';
 
 export interface Storyboard {
   scriptId: string;

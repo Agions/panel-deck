@@ -1,4 +1,4 @@
-import type { Storyboard } from '@/features/manga-pipeline/steps/step2-storyboard/storyboard-composer';
+import type { Storyboard } from '@/features/manga-pipeline/steps/step2-storyboard/composer';
 
 import {
   PipelineStep,

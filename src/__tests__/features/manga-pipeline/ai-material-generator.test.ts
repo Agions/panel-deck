@@ -1,6 +1,10 @@
-import { SceneDescription } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-description-generator';
-import { StoryboardScene } from '../../../features/manga-pipeline/steps/step2-storyboard/storyboard-composer';
-import { createAIGenerationPlan, AIGenerationPlan, BatchGenerationPlan } from '../../../features/manga-pipeline/steps/step3-material-matching/services/ai-material-generator';
+import { StoryboardScene } from '../../../features/manga-pipeline/steps/step2-storyboard/composer';
+import { SceneDescription } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-describer';
+import {
+  createAIGenerationPlan,
+  AIGenerationPlan,
+  BatchGenerationPlan,
+} from '../../../features/manga-pipeline/steps/step3-material-matching/services/ai-material-generator';
 
 const createMockScene = (overrides: Partial<StoryboardScene> = {}): StoryboardScene => ({
   sceneId: 'scene-001',
@@ -36,9 +40,15 @@ describe('AIMaterialGenerator', () => {
     });
 
     it('should set correct priority based on duration', () => {
-      const shortScene = createMockScene({ description: { ...createMockScene().description, duration: 5 } as SceneDescription });
-      const mediumScene = createMockScene({ description: { ...createMockScene().description, duration: 12 } as SceneDescription });
-      const longScene = createMockScene({ description: { ...createMockScene().description, duration: 20 } as SceneDescription });
+      const shortScene = createMockScene({
+        description: { ...createMockScene().description, duration: 5 } as SceneDescription,
+      });
+      const mediumScene = createMockScene({
+        description: { ...createMockScene().description, duration: 12 } as SceneDescription,
+      });
+      const longScene = createMockScene({
+        description: { ...createMockScene().description, duration: 20 } as SceneDescription,
+      });
 
       const shortPlan = createAIGenerationPlan([shortScene]);
       const mediumPlan = createAIGenerationPlan([mediumScene]);
@@ -50,9 +60,15 @@ describe('AIMaterialGenerator', () => {
     });
 
     it('should set correct cost based on duration', () => {
-      const shortScene = createMockScene({ description: { ...createMockScene().description, duration: 8 } as SceneDescription });
-      const mediumScene = createMockScene({ description: { ...createMockScene().description, duration: 15 } as SceneDescription });
-      const longScene = createMockScene({ description: { ...createMockScene().description, duration: 25 } as SceneDescription });
+      const shortScene = createMockScene({
+        description: { ...createMockScene().description, duration: 8 } as SceneDescription,
+      });
+      const mediumScene = createMockScene({
+        description: { ...createMockScene().description, duration: 15 } as SceneDescription,
+      });
+      const longScene = createMockScene({
+        description: { ...createMockScene().description, duration: 25 } as SceneDescription,
+      });
 
       const shortPlan = createAIGenerationPlan([shortScene]);
       const mediumPlan = createAIGenerationPlan([mediumScene]);
@@ -64,38 +80,72 @@ describe('AIMaterialGenerator', () => {
     });
 
     it('should select text2video model for action scenes', () => {
-      const actionScene = createMockScene({ description: { ...createMockScene().description, prompt: 'anime style, scene type: 动作, location: test' } as SceneDescription });
+      const actionScene = createMockScene({
+        description: {
+          ...createMockScene().description,
+          prompt: 'anime style, scene type: 动作, location: test',
+        } as SceneDescription,
+      });
       const plan = createAIGenerationPlan([actionScene]);
       expect(plan.scenes[0].model).toBe('text2video');
     });
 
     it('should select text2video model for chase scenes', () => {
-      const chaseScene = createMockScene({ description: { ...createMockScene().description, prompt: 'anime style, scene type: 追逐, location: test' } as SceneDescription });
+      const chaseScene = createMockScene({
+        description: {
+          ...createMockScene().description,
+          prompt: 'anime style, scene type: 追逐, location: test',
+        } as SceneDescription,
+      });
       const plan = createAIGenerationPlan([chaseScene]);
       expect(plan.scenes[0].model).toBe('text2video');
     });
 
     it('should select sdxl model for long scenes (>15s)', () => {
-      const longScene = createMockScene({ description: { ...createMockScene().description, duration: 20, prompt: 'anime style, scene type: 对话, location: test' } as SceneDescription });
+      const longScene = createMockScene({
+        description: {
+          ...createMockScene().description,
+          duration: 20,
+          prompt: 'anime style, scene type: 对话, location: test',
+        } as SceneDescription,
+      });
       const plan = createAIGenerationPlan([longScene]);
       expect(plan.scenes[0].model).toBe('sdxl');
     });
 
     it('should select pix2pix model for short scenes by default', () => {
-      const shortScene = createMockScene({ description: { ...createMockScene().description, duration: 10, prompt: 'anime style, scene type: 对话, location: test' } as SceneDescription });
+      const shortScene = createMockScene({
+        description: {
+          ...createMockScene().description,
+          duration: 10,
+          prompt: 'anime style, scene type: 对话, location: test',
+        } as SceneDescription,
+      });
       const plan = createAIGenerationPlan([shortScene]);
       expect(plan.scenes[0].model).toBe('pix2pix');
     });
 
     it('should estimate generation time based on duration', () => {
-      const scene = createMockScene({ description: { ...createMockScene().description, duration: 10, prompt: 'anime style, scene type: 对话, location: test' } as SceneDescription });
+      const scene = createMockScene({
+        description: {
+          ...createMockScene().description,
+          duration: 10,
+          prompt: 'anime style, scene type: 对话, location: test',
+        } as SceneDescription,
+      });
       const plan = createAIGenerationPlan([scene]);
       // Base time is duration * 2
       expect(plan.scenes[0].estimatedTime).toBe(20);
     });
 
     it('should apply 1.5x multiplier for action scenes', () => {
-      const actionScene = createMockScene({ description: { ...createMockScene().description, duration: 10, prompt: 'anime style, scene type: 动作, location: test' } as SceneDescription });
+      const actionScene = createMockScene({
+        description: {
+          ...createMockScene().description,
+          duration: 10,
+          prompt: 'anime style, scene type: 动作, location: test',
+        } as SceneDescription,
+      });
       const plan = createAIGenerationPlan([actionScene]);
       // Base time is 10 * 2 = 20, then * 1.5 = 30
       expect(plan.scenes[0].estimatedTime).toBe(30);
@@ -103,9 +153,18 @@ describe('AIMaterialGenerator', () => {
 
     it('should sort plans by priority (high first)', () => {
       const scenes = [
-        createMockScene({ sceneId: 'scene-low', description: { ...createMockScene().description, duration: 5 } as SceneDescription }),
-        createMockScene({ sceneId: 'scene-high', description: { ...createMockScene().description, duration: 20 } as SceneDescription }),
-        createMockScene({ sceneId: 'scene-medium', description: { ...createMockScene().description, duration: 12 } as SceneDescription }),
+        createMockScene({
+          sceneId: 'scene-low',
+          description: { ...createMockScene().description, duration: 5 } as SceneDescription,
+        }),
+        createMockScene({
+          sceneId: 'scene-high',
+          description: { ...createMockScene().description, duration: 20 } as SceneDescription,
+        }),
+        createMockScene({
+          sceneId: 'scene-medium',
+          description: { ...createMockScene().description, duration: 12 } as SceneDescription,
+        }),
       ];
       const plan = createAIGenerationPlan(scenes);
       expect(plan.scenes[0].sceneId).toBe('scene-high');
@@ -125,8 +184,22 @@ describe('AIMaterialGenerator', () => {
 
     it('should calculate totalEstimatedTime correctly', () => {
       const scenes = [
-        createMockScene({ sceneId: 's1', description: { ...createMockScene().description, duration: 10, prompt: 'anime style, scene type: 对话' } as SceneDescription }),
-        createMockScene({ sceneId: 's2', description: { ...createMockScene().description, duration: 15, prompt: 'anime style, scene type: 对话' } as SceneDescription }),
+        createMockScene({
+          sceneId: 's1',
+          description: {
+            ...createMockScene().description,
+            duration: 10,
+            prompt: 'anime style, scene type: 对话',
+          } as SceneDescription,
+        }),
+        createMockScene({
+          sceneId: 's2',
+          description: {
+            ...createMockScene().description,
+            duration: 15,
+            prompt: 'anime style, scene type: 对话',
+          } as SceneDescription,
+        }),
       ];
       const plan = createAIGenerationPlan(scenes);
       // 10*2 + 15*2 = 20 + 30 = 50
@@ -135,9 +208,18 @@ describe('AIMaterialGenerator', () => {
 
     it('should calculate totalCost based on distribution of scene costs', () => {
       const scenes = [
-        createMockScene({ sceneId: 's1', description: { ...createMockScene().description, duration: 25 } as SceneDescription }),
-        createMockScene({ sceneId: 's2', description: { ...createMockScene().description, duration: 25 } as SceneDescription }),
-        createMockScene({ sceneId: 's3', description: { ...createMockScene().description, duration: 5 } as SceneDescription }),
+        createMockScene({
+          sceneId: 's1',
+          description: { ...createMockScene().description, duration: 25 } as SceneDescription,
+        }),
+        createMockScene({
+          sceneId: 's2',
+          description: { ...createMockScene().description, duration: 25 } as SceneDescription,
+        }),
+        createMockScene({
+          sceneId: 's3',
+          description: { ...createMockScene().description, duration: 5 } as SceneDescription,
+        }),
       ];
       const plan = createAIGenerationPlan(scenes);
       // 2 out of 3 are high cost (>50%), so totalCost should be 'high'

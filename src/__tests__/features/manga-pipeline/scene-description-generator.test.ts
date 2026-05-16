@@ -1,5 +1,10 @@
 import { ScriptScene } from '../../../features/manga-pipeline/steps/step1-script-generation/types/script';
-import { generateSceneDescription, SceneDescription, STYLE_PRESETS, StylePreset } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-description-generator';
+import {
+  generateSceneDescription,
+  SceneDescription,
+  STYLE_PRESETS,
+  StylePreset,
+} from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-describer';
 
 const mockScene: ScriptScene = {
   id: 'scene-001',
@@ -15,7 +20,7 @@ const mockScene: ScriptScene = {
   content: '侦探小林在雨中拦住了一个撑着黑伞的神秘女子，她似乎在等待什么人。',
 };
 
-describe('scene-description-generator', () => {
+describe('scene-describer', () => {
   describe('generateSceneDescription', () => {
     it('应生成包含 sceneId 和 sceneNumber 的描述', () => {
       const result = generateSceneDescription(mockScene);

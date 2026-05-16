@@ -11,12 +11,12 @@ import { StepInput, StepOutput, CheckpointState } from '../../../../core/pipelin
 import { BasePipelineController } from '../../base/BasePipelineController';
 import { Script } from '../step1-script-generation/types/script';
 
+import { composeStoryboard, type Storyboard, type StoryboardOptions } from './composer';
 import {
   type CharacterIllustration,
   type EnhancedCharacterConstraint,
   type CharacterIllustration as CharacterIllustration2,
-} from './description/character-illustration-generator';
-import { composeStoryboard, type Storyboard, type StoryboardOptions } from './storyboard-composer';
+} from './description/char-illustrator';
 
 export interface StoryboardGenerationResult {
   storyboard: Storyboard;

@@ -1,6 +1,15 @@
-import { SceneDescription } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-description-generator';
-import { Storyboard, StoryboardScene } from '../../../features/manga-pipeline/steps/step2-storyboard/storyboard-composer';
-import { batchSearch, searchMaterial, MaterialMatch, MaterialItem, SearchQuery } from '../../../features/manga-pipeline/steps/step3-material-matching/services/material-searcher';
+import {
+  Storyboard,
+  StoryboardScene,
+} from '../../../features/manga-pipeline/steps/step2-storyboard/composer';
+import { SceneDescription } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-describer';
+import {
+  batchSearch,
+  searchMaterial,
+  MaterialMatch,
+  MaterialItem,
+  SearchQuery,
+} from '../../../features/manga-pipeline/steps/step3-material-matching/services/material-searcher';
 
 const createMockScene = (overrides: Partial<StoryboardScene> = {}): StoryboardScene => ({
   sceneId: 'scene-001',

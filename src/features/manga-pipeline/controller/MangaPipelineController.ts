@@ -18,7 +18,7 @@ import {
   ScriptGenerationPipeline,
   ScriptGenerationResult,
 } from '../steps/step1-script-generation/pipeline-controller';
-import { Storyboard } from '../steps/step2-storyboard/storyboard-composer';
+import { Storyboard } from '../steps/step2-storyboard/composer';
 import { StoryboardPipeline } from '../steps/step2-storyboard/StoryboardPipeline';
 import type { StoryboardGenerationResult } from '../steps/step2-storyboard/StoryboardPipeline';
 import {

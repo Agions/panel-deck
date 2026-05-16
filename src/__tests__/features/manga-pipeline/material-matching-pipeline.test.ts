@@ -1,6 +1,12 @@
-import { SceneDescription } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-description-generator';
-import { Storyboard, StoryboardScene } from '../../../features/manga-pipeline/steps/step2-storyboard/storyboard-composer';
-import { MaterialMatchingPipeline, MaterialMatchingResult } from '../../../features/manga-pipeline/steps/step3-material-matching/pipeline-controller';
+import {
+  Storyboard,
+  StoryboardScene,
+} from '../../../features/manga-pipeline/steps/step2-storyboard/composer';
+import { SceneDescription } from '../../../features/manga-pipeline/steps/step2-storyboard/description/scene-describer';
+import {
+  MaterialMatchingPipeline,
+  MaterialMatchingResult,
+} from '../../../features/manga-pipeline/steps/step3-material-matching/pipeline-controller';
 
 const createMockScene = (overrides: Partial<StoryboardScene> = {}): StoryboardScene => ({
   sceneId: 'scene-001',
@@ -50,32 +56,32 @@ describe('MaterialMatchingPipeline', () => {
   describe('process', () => {
     it('should process storyboard and return MaterialMatchingResult', async () => {
       const storyboard = createMockStoryboard();
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(result.materialMatching).toBeDefined();
     });
 
     it('should return matches array', async () => {
       const storyboard = createMockStoryboard();
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(Array.isArray(result.materialMatching.matches)).toBe(true);
     });
 
     it('should return groups array', async () => {
       const storyboard = createMockStoryboard();
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(Array.isArray(result.materialMatching.groups)).toBe(true);
     });
 
     it('should return coverage between 0 and 1', async () => {
       const storyboard = createMockStoryboard();
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(result.materialMatching.coverage).toBeGreaterThanOrEqual(0);
       expect(result.materialMatching.coverage).toBeLessThanOrEqual(1);
     });
 
     it('should generate aiGenerationPlan when no materials found', async () => {
       const storyboard = createMockStoryboard();
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(result.materialMatching.aiGenerationPlan).toBeDefined();
       expect(result.materialMatching.aiGenerationPlan.totalScenes).toBeGreaterThanOrEqual(0);
     });
@@ -87,13 +93,13 @@ describe('MaterialMatchingPipeline', () => {
         createMockScene({ sceneId: 'scene-003', sceneNumber: 3 }),
       ];
       const storyboard = createMockStoryboard(scenes);
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(result.materialMatching.matches).toHaveLength(3);
     });
 
     it('should preserve storyboard in result', async () => {
       const storyboard = createMockStoryboard();
-      const result = await pipeline.process({ storyboard }) as any;
+      const result = (await pipeline.process({ storyboard })) as any;
       expect(result.materialMatching.storyboard).toBe(storyboard);
     });
   });
@@ -104,7 +110,12 @@ describe('MaterialMatchingPipeline', () => {
     });
 
     it('should be restorable', () => {
-      const state = { stepId: 'material-matching', completed: true, data: {}, timestamp: Date.now() };
+      const state = {
+        stepId: 'material-matching',
+        completed: true,
+        data: {},
+        timestamp: Date.now(),
+      };
       pipeline.restore(state);
       // restore should not throw
       expect(pipeline.getCheckpoint()).toBeDefined();

@@ -1,5 +1,10 @@
 import { Script } from '../../../features/manga-pipeline/steps/step1-script-generation/types/script';
-import { composeStoryboard, Storyboard, StoryboardScene, StoryboardOptions } from '../../../features/manga-pipeline/steps/step2-storyboard/storyboard-composer';
+import {
+  composeStoryboard,
+  Storyboard,
+  StoryboardScene,
+  StoryboardOptions,
+} from '../../../features/manga-pipeline/steps/step2-storyboard/composer';
 
 const mockScript: Script = {
   id: 'script-001',
@@ -63,7 +68,7 @@ const mockScript: Script = {
   },
 };
 
-describe('storyboard-composer', () => {
+describe('composer', () => {
   describe('composeStoryboard', () => {
     it('应返回包含 scriptId 和 title 的 storyboard', () => {
       const result = composeStoryboard(mockScript);
@@ -79,7 +84,7 @@ describe('storyboard-composer', () => {
 
     it('每个 scene 应有 sceneId, sceneNumber, description, status', () => {
       const result = composeStoryboard(mockScript);
-      result.scenes.forEach(scene => {
+      result.scenes.forEach((scene) => {
         expect(scene.sceneId).toBeTruthy();
         expect(scene.sceneNumber).toBeTruthy();
         expect(scene.description).toBeTruthy();
@@ -95,7 +100,7 @@ describe('storyboard-composer', () => {
 
     it('characters 每个元素应有 prompt, negativePrompt, pose, expression', () => {
       const result = composeStoryboard(mockScript);
-      result.characters.forEach(char => {
+      result.characters.forEach((char) => {
         expect(char.characterId).toBeTruthy();
         expect(char.name).toBeTruthy();
         expect(char.prompt).toBeTruthy();
@@ -127,7 +132,7 @@ describe('storyboard-composer', () => {
       it('style 选项应影响场景和角色的风格', () => {
         const result = composeStoryboard(mockScript, { style: 'comic' });
         expect(result.metadata.style).toBe('comic');
-        result.scenes.forEach(scene => {
+        result.scenes.forEach((scene) => {
           expect(scene.description.styleHint).toBe('漫画风格');
         });
       });
@@ -139,7 +144,7 @@ describe('storyboard-composer', () => {
 
       it('aspectRatio 选项应传递给场景', () => {
         const result = composeStoryboard(mockScript, { aspectRatio: '9:16' });
-        result.scenes.forEach(scene => {
+        result.scenes.forEach((scene) => {
           expect(scene.description.aspectRatio).toBe('9:16');
         });
       });
@@ -148,7 +153,7 @@ describe('storyboard-composer', () => {
     describe('scene status', () => {
       it('所有场景初始 status 应为 pending', () => {
         const result = composeStoryboard(mockScript);
-        result.scenes.forEach(scene => {
+        result.scenes.forEach((scene) => {
           expect(scene.status).toBe('pending');
         });
       });
@@ -157,7 +162,7 @@ describe('storyboard-composer', () => {
     describe('imageUrl', () => {
       it('imageUrl 初始应为 undefined', () => {
         const result = composeStoryboard(mockScript);
-        result.scenes.forEach(scene => {
+        result.scenes.forEach((scene) => {
           expect(scene.imageUrl).toBeUndefined();
         });
       });
