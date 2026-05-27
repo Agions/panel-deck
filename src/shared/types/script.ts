@@ -4,6 +4,15 @@
  * Script and narrative content types
  */
 
+// Video segment type (used by ScriptEditor and VideoEditor)
+export interface VideoSegment {
+  id: string;
+  start: number;
+  end: number;
+  type: string;
+  content?: string;
+}
+
 export interface ScriptSegment {
   id: string;
   startTime: number;

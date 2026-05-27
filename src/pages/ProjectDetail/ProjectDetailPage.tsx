@@ -20,6 +20,7 @@ import { Tabs, TabPane } from '@/components/ui/tabs';
 import { Title, Text, Paragraph } from '@/components/ui/typography';
 import { Modal, Spin, Space, Empty, Alert, Button, Card } from '@/components/ui/ui-components';
 import type { EvaluationScores, FrameComment, StoryboardVersion } from '@/core/services';
+import type { VideoSegment } from '@/shared/types/script';
 import {
   collaborationService,
   costService,
@@ -228,10 +229,11 @@ const ProjectDetail = () => {
     if (!project) return;
 
     try {
-      const newScript = {
+      const newScript: Script = {
         id: uuidv4(),
-        projectId: project.id,
-        content: [],
+        title: '新剧本',
+        content: '',
+        segments: [],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -243,15 +245,15 @@ const ProjectDetail = () => {
       };
 
       // 先更新UI
-      setProject(updatedProject as any);
-      setActiveScript(newScript as any);
+      setProject(updatedProject);
+      setActiveScript(newScript);
 
       // 保存到文件，显示loading
       toast.loading('正在保存剧本...');
       tauriService
         .writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
-          updateProject(updatedProject.id, updatedProject as any);
+          updateProject(updatedProject.id, updatedProject);
           toast.success('剧本创建成功');
         })
         .catch((error) => {
@@ -272,14 +274,20 @@ const ProjectDetail = () => {
     navigate(`/projects/${id}/edit`);
   };
 
-  const handleScriptChange = (segments: unknown[]) => {
+  const handleScriptChange = (segments: VideoSegment[]) => {
     if (!project || !activeScript) return;
 
     try {
       // 更新脚本内容
       const updatedScript = {
         ...activeScript,
-        content: segments,
+        segments: segments.map(seg => ({
+          id: seg.id,
+          startTime: seg.start,
+          endTime: seg.end,
+          content: seg.content ?? '',
+          type: seg.type as 'narration' | 'dialogue' | 'action' | 'transition',
+        })),
         updatedAt: new Date().toISOString(),
       };
 
@@ -296,14 +304,14 @@ const ProjectDetail = () => {
       };
 
       // 先更新UI
-      setProject(updatedProject as any);
-      setActiveScript(updatedScript as any);
+      setProject(updatedProject);
+      setActiveScript(updatedScript);
 
       // 保存到文件
       tauriService
         .writeText(updatedProject.id, JSON.stringify(updatedProject))
         .then(() => {
-          updateProject(updatedProject.id, updatedProject as any);
+          updateProject(updatedProject.id, updatedProject);
           toast.success('脚本内容已保存');
         })
         .catch((error) => {
@@ -505,7 +513,13 @@ const ProjectDetail = () => {
                       >
                         <Suspense fallback={<Spin />}>
                           <ScriptEditor
-                            segments={script.content as any}
+                            segments={script.segments ? script.segments.map(seg => ({
+                              id: seg.id,
+                              start: seg.startTime,
+                              end: seg.endTime,
+                              type: seg.type,
+                              content: seg.content,
+                            })) : []}
                             onSegmentsChange={handleScriptChange}
                           />
                         </Suspense>
@@ -616,12 +630,12 @@ const ProjectDetail = () => {
 
           <TabPane tab={renderTabLabel('composition', <PlayCircle />, '合成')} key="composition">
             <div className={styles.workflowSection}>
-              {activeScript?.content &&
-              activeScript.content.length > 0 &&
+              {activeScript?.segments &&
+              activeScript.segments.length > 0 &&
               (project.storyboardFrames?.length ?? 0) > 0 ? (
                 <Suspense fallback={<Spin />}>
                   <CompositionStudio
-                    frames={project.storyboardFrames as any}
+                    frames={project.storyboardFrames as StoryboardFrame[]}
                     projectId={project?.id}
                     onCompositionChange={(comp) => {
                       persistProjectPatch({ composition: comp });

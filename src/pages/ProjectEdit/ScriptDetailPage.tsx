@@ -17,6 +17,15 @@ import type { Script, ScriptSegment } from '@/shared/types/script';
 
 import styles from './ScriptDetail.module.less';
 
+// VideoSegment type used by ScriptEditor (local alias)
+interface VideoSegment {
+  id: string;
+  start: number;
+  end: number;
+  type: string;
+  content?: string;
+}
+
 const ScriptDetail = () => {
   const { projectId, scriptId } = useParams<{ projectId: string; scriptId: string }>();
   const navigate = useNavigate();
@@ -24,7 +33,8 @@ const ScriptDetail = () => {
   const [loading, setLoading] = useState(true);
   const [project, setProject] = useState<ProjectData | null>(null);
   const [script, setScript] = useState<Script | null>(null);
-  const [segments, setSegments] = useState<ScriptSegment[]>([]);
+  // Use VideoSegment for ScriptEditor compatibility
+  const [segments, setSegments] = useState<VideoSegment[]>([]);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
@@ -48,14 +58,24 @@ const ScriptDetail = () => {
       return;
     }
 
-    setProject(currentProject as any);
-    setScript(currentScript as any);
-    setSegments(Array.isArray(currentScript.content) ? currentScript.content : ([] as any));
+    setProject(currentProject);
+    setScript(currentScript);
+    // Convert ScriptSegment[] (startTime/endTime) to VideoSegment[] (start/end)
+    const videoSegments: VideoSegment[] = Array.isArray(currentScript.segments)
+      ? currentScript.segments.map((seg) => ({
+          id: seg.id,
+          start: seg.startTime,
+          end: seg.endTime,
+          type: seg.type,
+          content: seg.content,
+        }))
+      : [];
+    setSegments(videoSegments);
     setLoading(false);
   }, [projectId, scriptId, projects, navigate]);
 
-  const handleSegmentsChange = (newSegments: unknown[]) => {
-    setSegments(newSegments as any);
+  const handleSegmentsChange = (newSegments: VideoSegment[]) => {
+    setSegments(newSegments);
   };
 
   const handleSave = async () => {
@@ -64,9 +84,18 @@ const ScriptDetail = () => {
     try {
       setLoading(true);
 
-      const updatedScript = {
+      // Convert VideoSegment[] back to ScriptSegment[] for storage
+      const scriptSegments: ScriptSegment[] = segments.map((seg) => ({
+        id: seg.id,
+        startTime: seg.start,
+        endTime: seg.end,
+        content: seg.content ?? '',
+        type: seg.type as ScriptSegment['type'],
+      }));
+
+      const updatedScript: Script = {
         ...script,
-        content: segments,
+        segments: scriptSegments,
         updatedAt: new Date().toISOString(),
       };
 
@@ -80,9 +109,9 @@ const ScriptDetail = () => {
         updatedAt: new Date().toISOString(),
       };
 
-      setProject(updatedProject as any);
-      setScript(updatedScript as any);
-      updateProject(updatedProject.id, updatedProject as any);
+      setProject(updatedProject);
+      setScript(updatedScript);
+      updateProject(updatedProject.id, updatedProject);
       await tauriService.writeText(updatedProject.id, JSON.stringify(updatedProject));
 
       toast.success('保存成功');
@@ -100,7 +129,7 @@ const ScriptDetail = () => {
     try {
       const scriptContent =
         segments
-          ?.map((segment: ScriptSegment, index: number) => {
+          ?.map((segment: VideoSegment, index: number) => {
             return `【第${index + 1}幕】\n${segment.content || ''}\n`;
           })
           .join('\n') || '';
@@ -203,7 +232,7 @@ const ScriptDetail = () => {
           <p className="text-sm">
             总时长:{' '}
             {segments.reduce(
-              (total, seg) => total + ((seg.endTime || 0) - (seg.startTime || 0)),
+              (total, seg) => total + ((seg.end || 0) - (seg.start || 0)),
               0
             )}{' '}
             秒
@@ -212,7 +241,7 @@ const ScriptDetail = () => {
       </Card>
 
       <div className={styles.editorContainer}>
-        <ScriptEditor segments={segments as any} onSegmentsChange={handleSegmentsChange} />
+        <ScriptEditor segments={segments} onSegmentsChange={handleSegmentsChange} />
       </div>
 
       <ConfirmDialog
