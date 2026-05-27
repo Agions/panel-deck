@@ -4,6 +4,7 @@
  */
 
 import type { DomainEvent } from '@/domain/shared/events/domain-events';
+
 import type { PipelineContext } from './pipeline-context';
 export type { PipelineContext };
 

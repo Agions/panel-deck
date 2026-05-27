@@ -3,11 +3,12 @@
  * 集成 telemetry，在每个步骤执行前后自动上报
  */
 
-import { DataContext } from './data-context';
 import { logger } from '@/core/utils/logger';
-import { telemetry, TelemetryEvent } from '@/infrastructure/telemetry/telemetry';
 import type { DomainEvent } from '@/domain/shared/events/domain-events';
 import type { EventBus } from '@/infrastructure/queue/event-bus';
+import { telemetry, TelemetryEvent } from '@/infrastructure/telemetry/telemetry';
+
+import { DataContext } from './data-context';
 
 export interface IStorage {
   get<T>(key: string): T | undefined;

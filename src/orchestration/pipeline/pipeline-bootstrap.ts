@@ -3,16 +3,19 @@
  * 展示：如何将各层组装在一起，形成完整流水线
  */
 
+import { logger } from '@/core/utils/logger';
+import type { IScriptService } from '@/domain/script/services/script.service';
+import type { AIProvider } from '@/infrastructure/ai/providers/ai-provider.interface';
 import { eventBus } from '@/infrastructure/queue/event-bus';
+import type { IStorage } from '@/infrastructure/storage/storage.interface';
+
 import { CheckpointManager } from './engine/checkpoint-manager';
 import { DAGPipelineEngine } from './engine/dag-pipeline-engine';
-import { StepScriptGeneration } from './steps/step-script';
-import { StepImport } from './steps/step-import';
-import type { AIProvider } from '@/infrastructure/ai/providers/ai-provider.interface';
-import type { IStorage } from '@/infrastructure/storage/storage.interface';
-import type { IScriptService } from '@/domain/script/services/script.service';
 import { createPipelineContext } from './engine/pipeline-context';
-import { logger } from '@/core/utils/logger';
+import { StepImport } from './steps/step-import';
+import { StepScriptGeneration } from './steps/step-script';
+
+
 
 /**
  * PipelineBootstrap — 流水线引导程序

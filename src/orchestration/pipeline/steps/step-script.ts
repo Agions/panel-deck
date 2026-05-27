@@ -4,12 +4,13 @@
  */
 
 import { logger } from '@/core/utils/logger';
-import { BasePipelineStep, StepStatus, type StepResult, type PipelineContext } from '../engine/step.interface';
 import { ScriptService, type GenerateOptions } from '@/domain/script/services/script.service';
 import {
   StepCompletedEvent,
   StepFailedEvent,
 } from '@/domain/shared/events/domain-events';
+
+import { BasePipelineStep, StepStatus, type StepResult, type PipelineContext , IStepFactory } from '../engine/step.interface';
 
 /**
  * StepScriptConfig — 剧本生成步骤配置
@@ -113,7 +114,6 @@ export class StepScriptGeneration extends BasePipelineStep {
 
 // ========== Step Factory (for testing) ==========
 
-import type { IStepFactory } from '../engine/step.interface';
 
 export class StepScriptFactory implements IStepFactory {
   createStep(stepType: string, config: unknown): import('../engine/step.interface').IPipelineStep {

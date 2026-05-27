@@ -11,14 +11,15 @@ import {
   StepFailedEvent,
   PipelineCompletedEvent,
   PipelineFailedEvent,
-  QualityGateFailedEvent,
   ReviewRequestedEvent,
   ReviewCompletedEvent,
 } from '@/domain/shared/events/domain-events';
-import type { IPipelineStep, StepResult, StepMetrics } from './step.interface';
-import type { PipelineContext } from './pipeline-context';
-import { CheckpointManager } from './checkpoint-manager';
 import type { IEventBus } from '@/infrastructure/queue/event-bus';
+
+import { CheckpointManager } from './checkpoint-manager';
+import type { PipelineContext } from './pipeline-context';
+import type { IPipelineStep, StepResult, StepMetrics } from './step.interface';
+
 
 /** 流水线状态 */
 export enum PipelineStatus {

@@ -89,7 +89,7 @@ export function PreviewPanel({
       switch (e.key) {
         case ' ':
           e.preventDefault();
-          isPlaying ? onPause?.() : onPlay?.();
+          void (isPlaying ? onPause?.() : onPlay?.());
           break;
         case 'ArrowRight':
           e.preventDefault();

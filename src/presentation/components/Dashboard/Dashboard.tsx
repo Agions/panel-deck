@@ -4,11 +4,10 @@
  */
 
 import React, { type ReactNode, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Plus, MoreHorizontal, Clock, TrendingUp, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/shared/components/ui/Button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import type { ProjectData as Project } from '@/shared/types/project';
 import { formatRelativeTime } from '@/shared/utils';
@@ -76,12 +75,12 @@ export function Dashboard({
         </div>
       </header>
 
-      {/* Quick Stats */}
-      <section className={styles.statsRow} aria-label="项目统计">
+      {/* Stats row */}
+      <div className={styles.statsRow}>
         <StatCard
           icon={<TrendingUp />}
-          label="进行中"
-          value={projects.filter((p) => p.status === 'processing').length}
+          label="项目总数"
+          value={projects.length}
           color="primary"
         />
         <StatCard
@@ -90,12 +89,11 @@ export function Dashboard({
           value={formatRelativeTime(projects[0]?.updatedAt)}
           color="secondary"
         />
-      </section>
+      </div>
 
       {/* Project Grid */}
       <section
         className={styles.projectGrid}
-        role="region"
         aria-label="项目列表"
         aria-busy={isLoading}
       >
@@ -108,7 +106,7 @@ export function Dashboard({
         ) : projects.length === 0 ? (
           <EmptyState onCreate={handleCreate} />
         ) : (
-          <ul className={styles.gridList} role="list">
+          <ul className={styles.gridList}>
             {projects.map((project) => (
               <li key={project.id}>
                 <ProjectCard
@@ -144,7 +142,7 @@ function ProjectCard({ project, onOpen, onDelete, onDuplicate }: ProjectCardProp
   );
 
   return (
-    <article
+    <div
       className={styles.projectCard}
       onClick={() => onOpen(project.id)}
       onKeyDown={handleKeyDown}
@@ -225,7 +223,7 @@ function ProjectCard({ project, onOpen, onDelete, onDuplicate }: ProjectCardProp
       </div>
 
       <ChevronRight className={styles.chevron} aria-hidden="true" />
-    </article>
+    </div>
   );
 }
 
