@@ -15,8 +15,8 @@
 - `eslint.config.js`: 添加 `react: { version: '18.2' }` settings 消除警告
 - **ESLint: 0 errors, 0 warnings** ✅
 
-### Jest 测试（1553 passed, 0 failed）
-- **88 suites passed, 0 failed**
+### Jest 测试（1571 passed, 0 failed）
+- **87 suites passed, 0 failed**
 - 修复的测试文件：
   - `event-bus.test.ts`: 重写（`StepStartedEvent.TYPE` 不存在 → 使用 `event.type`）
   - `event-bus.ts`: 添加 `flushSync()` 辅助方法（测试用）
@@ -24,8 +24,9 @@
   - `plugin-host.test.ts`: API 不匹配修复（activateStyle/activateFormat 返回 void）
   - `temp-file-manager.test.ts`: `vi` → `jest.fn()` + `cleanup()` 返回值类型
   - `step-video-editing.test.ts`: 添加 `@panel-flow/common` Jest 映射
-- E2E 测试跳过（`@playwright/test` 未安装）
-- **5 skipped, 1553 passed, 0 failed** ✅
+  - `autoPipelineStore.test.ts`: 修复类型错误 (unknown[] → any[])
+- 新增测试：**AutoPipelineStore 34 个测试用例**（生命周期、暂停/恢复、错误处理等）
+- **4 skipped, 1571 passed, 0 failed** ✅
 
 ### Jest 配置修复
 - 添加 `'^@panel-flow/common/(.*)$': '<rootDir>/packages/common/src/$1'` 映射
