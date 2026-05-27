@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TextArea } from '@/components/ui/textarea';
 import type { NovelMetadata } from '@/features/script/components/NovelImporter';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 const NovelImporter = lazy(() => import('@/features/script/components/NovelImporter'));
 

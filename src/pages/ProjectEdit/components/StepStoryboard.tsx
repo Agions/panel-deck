@@ -11,7 +11,7 @@ import type { StoryAnalysis } from '@/core/types';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 import { toast } from '@/shared/components/ui/Toast';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 import CollaborationPanel from './CollaborationPanel';
 

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 const RenderCenter = lazy(() => import('@/components/business/RenderCenter'));
 

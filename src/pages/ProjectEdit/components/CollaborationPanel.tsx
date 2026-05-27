@@ -18,7 +18,7 @@ import type { FrameComment, StoryboardVersion, VersionDiffSummary } from '@/core
 import { collaborationService } from '@/core/services';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 export interface CollaborationPanelProps {
   projectId: string | undefined;

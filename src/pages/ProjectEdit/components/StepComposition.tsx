@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { CompositionProject } from '@/core/types';
 import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 const CompositionStudio = lazy(() => import('@/components/business/CompositionStudio'));
 

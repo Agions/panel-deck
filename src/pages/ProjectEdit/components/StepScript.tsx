@@ -7,7 +7,7 @@ import React, { lazy } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 const ScriptEditor = lazy(() => import('@/features/script/components/ScriptEditor'));
 

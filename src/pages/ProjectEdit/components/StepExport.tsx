@@ -10,7 +10,7 @@ import type { QualityGateIssue } from '@/core/services';
 import { toast } from '@/shared/components/ui/Toast';
 import type { ExportSettings } from '@/features/video/components/VideoExporter';
 
-import styles from '../../ProjectEdit.module.less';
+import styles from '../ProjectEdit.module.less';
 
 import QualityGateAlert from './QualityGateAlert';
 
