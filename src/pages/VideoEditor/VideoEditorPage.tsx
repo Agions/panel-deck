@@ -18,20 +18,16 @@ import { toast } from 'sonner';
 
 import { Tabs, TabPane } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import {
-  Button,
-  Card,
-  Title,
-  Text,
-  Progress,
-  Empty,
-  Space,
-  Tag,
-  Modal,
-  Row,
-  Col,
-  Dropdown,
-} from '@/components/ui/ui-components';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Title, Text } from '@/components/ui/typography';
+import { Progress } from '@/components/ui/progress';
+import { Empty } from '@/components/ui/empty';
+import { Space } from '@/components/ui/space';
+import { Tag } from '@/components/ui/tag';
+import { Modal } from '@/components/ui/modal';
+import { Row, Col } from '@/components/ui/grid';
+import { Dropdown } from '@/components/ui/dropdown';
 import { tauriService } from '@/core/services';
 import { logger } from '@/core/utils/logger';
 import { delay } from '@/shared/utils';

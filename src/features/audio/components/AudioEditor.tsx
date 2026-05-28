@@ -32,16 +32,13 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Tabs } from '@/components/ui/tabs';
 import { Tooltip } from '@/components/ui/tooltip';
-import {
-  message,
-  Space,
-  Tag,
-  Row,
-  Col,
-  Table,
-  Empty,
-  Progress,
-} from '@/components/ui/ui-components';
+import { message } from '@/components/ui/message';
+import { Space } from '@/components/ui/space';
+import { Tag } from '@/components/ui/tag';
+import { Row, Col } from '@/components/ui/grid';
+import { Table } from '@/components/ui/table';
+import { Empty } from '@/components/ui/empty';
+import { Progress } from '@/components/ui/progress';
 import { logger } from '@/core/utils/logger';
 import { formatTime, generateId } from '@/shared/utils';
 
