@@ -2,7 +2,7 @@
  * panel-flow Shared Utils - Motion/Animation Utilities
  */
 
-import { Variants, Easing } from 'framer-motion';
+import { Variants, Easing, Transition } from 'framer-motion';
 
 export const transitions = {
   fast: { duration: 0.15 },
@@ -87,7 +87,7 @@ export const createPageTransition = (customTransitions?: {
   animate: {
     ...pageVariants.animate,
     transition: {
-      ...(pageVariants.animate as any).transition,
+      ...(pageVariants.animate as { transition?: Transition }).transition,
       duration: customTransitions?.duration,
       ease: customTransitions?.ease as unknown as Easing | undefined,
     },

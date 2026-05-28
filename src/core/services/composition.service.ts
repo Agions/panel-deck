@@ -11,6 +11,7 @@ import type {
   TransitionConfig,
   StoryboardFrame,
   CameraMotion,
+  AnimationProperty,
 } from '@/core/types';
 import { logger } from '@/core/utils/logger';
 
@@ -297,7 +298,7 @@ export class CompositionService {
 
     frame.keyframes.push({
       time: keyframe.time,
-      property: keyframe.property as any,
+      property: keyframe.property as AnimationProperty,
       value: keyframe.value,
       easing:
         (keyframe.easing as 'linear' | 'ease-in' | 'ease-out' | 'ease-in-out') || 'ease-in-out',

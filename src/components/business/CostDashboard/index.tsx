@@ -132,18 +132,24 @@ function CostDashboard({ projectId }: CostDashboardProps) {
       dataIndex: 'createdAt',
       key: 'createdAt',
       width: 170,
-      render: (v: any) => new Date(v!).toLocaleString(),
+      render: (v) => {
+        const date = v as string | number | undefined;
+        return date !== undefined ? new Date(date).toLocaleString() : '';
+      },
     },
     {
       title: '来源',
       dataIndex: 'source',
       key: 'source',
       width: 120,
-      render: (v: any) => (
-        <Badge variant="outline">
-          {v === 'project_edit' ? '编辑页' : v === 'project_detail' ? '详情页' : '未知'}
-        </Badge>
-      ),
+      render: (v) => {
+        const source = v as ReviewExportActivity['source'] | undefined;
+        return (
+          <Badge variant="outline">
+            {source === 'project_edit' ? '编辑页' : source === 'project_detail' ? '详情页' : '未知'}
+          </Badge>
+        );
+      },
     },
     {
       title: '状态',
@@ -182,18 +188,24 @@ function CostDashboard({ projectId }: CostDashboardProps) {
       dataIndex: 'timestamp',
       key: 'timestamp',
       width: 120,
-      render: (v: any) => new Date(v).toLocaleDateString(),
+      render: (v) => {
+        const ts = v as string | number | undefined;
+        return ts !== undefined ? new Date(ts).toLocaleDateString() : '';
+      },
     },
     {
       title: '类型',
       dataIndex: 'type',
       key: 'type',
       width: 90,
-      render: (v: any) => <Badge variant="outline">{v}</Badge>,
+      render: (v) => {
+        const type = v as CostRecord['type'] | undefined;
+        return <Badge variant="outline">{type ?? ''}</Badge>;
+      },
     },
     { title: 'Provider', dataIndex: 'provider', key: 'provider', width: 100 },
-    { title: '模型', dataIndex: 'model', key: 'model', width: 120, render: (v: any) => v ?? '-' },
-    { title: '成本', dataIndex: 'cost', key: 'cost', width: 100, render: (v: any) => fmt(v) },
+    { title: '模型', dataIndex: 'model', key: 'model', width: 120, render: (v) => (v as string | undefined) ?? '-' },
+    { title: '成本', dataIndex: 'cost', key: 'cost', width: 100, render: (v) => fmt(v as number) },
   ];
 
   const updateBudget = (key: 'daily' | 'weekly' | 'monthly', value?: number | null) => {

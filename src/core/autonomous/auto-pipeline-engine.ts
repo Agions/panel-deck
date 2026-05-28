@@ -163,9 +163,9 @@ export class AutoPipelineEngine {
         resolution: '1080p',
         fileSize: this.context.get('step_export')?.fileSize as number | undefined,
         stepDurations: this.collectStepDurations(),
-        sceneCount: (this.context.get('step_script') as any)?.scenes?.length as number | undefined,
-        characterCount: (this.context.get('step_character') as any)?.characters?.length as number | undefined,
-        renderedFrames: (this.context.get('step_render') as any)?.renderedFrames?.length as number | undefined,
+        sceneCount: (this.context.get('step_script') as unknown as { scenes?: { length: number } })?.scenes?.length as number | undefined,
+        characterCount: (this.context.get('step_character') as unknown as { characters?: { length: number } })?.characters?.length as number | undefined,
+        renderedFrames: (this.context.get('step_render') as unknown as { renderedFrames?: { length: number } })?.renderedFrames?.length as number | undefined,
       };
     } catch (error) {
       this.status = 'failed';

@@ -172,7 +172,7 @@ ${content.slice(0, 2000)}
 
       return {
         id: novelId,
-        title: (data as any).title ?? '未命名小说',
+        title: (data as Partial<NovelMetadata>).title ?? '未命名小说',
         author: data.author,
         genre: data.genre,
         summary: data.summary,

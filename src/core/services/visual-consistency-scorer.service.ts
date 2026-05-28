@@ -11,6 +11,7 @@
  */
 
 import type { AIProvider } from '@/core/ai/providers/ai-provider.interface';
+import type { ChatMessage } from '@/core/ai/providers/ai-provider.interface';
 
 import type { CharacterVideoRef } from './image-generation/types';
 
@@ -215,8 +216,8 @@ Respond ONLY with a single integer between 0-100. No explanation.`;
               { type: 'text' as const, text: `\nTest image (evaluate consistency):` },
               ...frameImage,
             ],
-          } as any,
-          { role: 'user' as const, content: prompt } as any,
+          } as unknown as ChatMessage,
+          { role: 'user' as const, content: prompt } as unknown as ChatMessage,
         ],
       });
 

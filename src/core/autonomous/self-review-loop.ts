@@ -13,6 +13,7 @@ import type {
   StepOutput,
 } from './autonomous.types';
 import { aiService } from '../services/ai.service';
+import { logger } from '../utils/logger';
 
 // ============================================================================
 // Prompt 模板
@@ -136,6 +137,7 @@ export class SelfReviewLoop {
     } catch (error) {
       // 审核失败时，默认通过（不阻塞流程）
       console.error(`[SelfReviewLoop] Review failed for ${stepId}:`, error);
+      logger.error(`[SelfReviewLoop] Review failed for ${stepId}:`, error);
       return {
         passed: true,
         score: 70,
@@ -228,6 +230,7 @@ ${reviewResult.dimensions
       return repaired ?? originalOutput; // 解析失败时返回原输出
     } catch (error) {
       console.error(`[SelfReviewLoop] Repair failed for ${stepId}:`, error);
+      logger.error(`[SelfReviewLoop] Repair failed for ${stepId}:`, error);
       return originalOutput;
     }
   }

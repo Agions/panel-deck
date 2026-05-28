@@ -4,6 +4,11 @@
  */
 
 import type { Script } from './script';
+import type { StoryboardFrame } from '@/features/storyboard/components/StoryboardEditor';
+import type { Character } from './novel';
+import type { CompositionProject } from './composition';
+import type { AudioTrackConfig } from '@/features/audio/components/AudioEditor';
+import type { EvaluationScores } from '@/core/services';
 
 export interface ProjectData {
   id: string;
@@ -24,13 +29,13 @@ export interface ProjectData {
   novelMetadata?: unknown;
   storyboardComments?: unknown[];
   storyboardVersions?: unknown[];
-  // Extended properties used by ProjectDetailPage (use any to avoid circular deps)
-  storyboardFrames?: any[];
-  characters?: any[];
-  composition?: any;
-  audioConfig?: any;
-  evaluationSummary?: any;
-  evaluationReport?: { summary?: any };
+  // Extended properties used by ProjectDetailPage
+  storyboardFrames?: StoryboardFrame[];
+  characters?: Character[];
+  composition?: CompositionProject;
+  audioConfig?: AudioTrackConfig;
+  evaluationSummary?: EvaluationScores;
+  evaluationReport?: { summary?: EvaluationScores };
   // Pipeline progress tracking
   currentStep?: PipelineStep;
 }

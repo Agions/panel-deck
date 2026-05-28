@@ -54,19 +54,16 @@ const SubtitleSettings = () => (
 
     <div className={styles.formWrapper}>
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>字幕内容</label>
         <Textarea rows={4} placeholder="输入字幕文本..." className={styles.textArea} />
       </div>
 
       <div className={styles.formRow}>
         <div className={styles.formItem}>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className={styles.label}>字体大小</label>
           <Slider min={12} max={72} defaultValue={24} className={styles.slider} />
         </div>
         <div className={styles.formItem}>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className={styles.label}>字体颜色</label>
           <input type="color" className={styles.colorInput} defaultValue="#ffffff" />
         </div>
@@ -74,19 +71,16 @@ const SubtitleSettings = () => (
 
       <div className={styles.formRow}>
         <div className={styles.formItem}>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className={styles.label}>描边颜色</label>
           <input type="color" className={styles.colorInput} defaultValue="#000000" />
         </div>
         <div className={styles.formItem}>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className={styles.label}>描边宽度</label>
           <Slider min={0} max={4} defaultValue={2} className={styles.slider} />
         </div>
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>背景样式</label>
         <Select defaultValue="none">
           <SelectTrigger>
@@ -102,7 +96,6 @@ const SubtitleSettings = () => (
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>位置</label>
         <Select defaultValue="bottom">
           <SelectTrigger>
@@ -117,7 +110,6 @@ const SubtitleSettings = () => (
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>样式预设</label>
         <Select defaultValue="default">
           <SelectTrigger>
@@ -144,19 +136,16 @@ const AudioSettings = () => (
 
     <div className={styles.formWrapper}>
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>音量</label>
         <Slider defaultValue={80} className={styles.slider} />
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>淡入</label>
         <Slider max={5} defaultValue={0} className={styles.slider} />
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>淡出</label>
         <Slider max={5} defaultValue={0} className={styles.slider} />
       </div>
@@ -166,14 +155,12 @@ const AudioSettings = () => (
       <h5 className={styles.groupTitle}>降噪</h5>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>降噪强度</label>
         <Slider defaultValue={0} className={styles.slider} />
       </div>
 
       <div className={styles.formItem}>
         <div className={styles.switchRow}>
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label className={styles.label}>回声消除</label>
           <Switch />
         </div>
@@ -191,25 +178,21 @@ const VideoSettings = () => (
 
     <div className={styles.formWrapper}>
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>亮度</label>
         <Slider defaultValue={50} className={styles.slider} />
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>对比度</label>
         <Slider defaultValue={50} className={styles.slider} />
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>饱和度</label>
         <Slider defaultValue={50} className={styles.slider} />
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>色温</label>
         <Slider defaultValue={50} className={styles.slider} />
       </div>
@@ -217,7 +200,6 @@ const VideoSettings = () => (
       <Separator className={styles.separator} />
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>预设效果</label>
         <Select defaultValue="none">
           <SelectTrigger>
@@ -253,7 +235,6 @@ const ExportSettings = ({
 
     <div className={styles.formWrapper}>
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>输出格式</label>
         <Select
           defaultValue={exportSettings?.format || 'mp4'}
@@ -272,7 +253,6 @@ const ExportSettings = ({
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>分辨率</label>
         <Select
           defaultValue={exportSettings?.resolution || '1080p'}
@@ -292,7 +272,6 @@ const ExportSettings = ({
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>画质</label>
         <Select
           defaultValue={exportSettings?.quality || 'high'}
@@ -311,7 +290,6 @@ const ExportSettings = ({
       </div>
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>帧率</label>
         <Select defaultValue="30">
           <SelectTrigger>
@@ -328,7 +306,6 @@ const ExportSettings = ({
       <Separator className={styles.separator} />
 
       <div className={styles.formItem}>
-        {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
         <label className={styles.label}>编码器</label>
         <Select defaultValue="h264">
           <SelectTrigger>

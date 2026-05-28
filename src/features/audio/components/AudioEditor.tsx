@@ -145,6 +145,7 @@ function AudioEditor({
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordingTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // 音频元素引用
   const voiceAudioRefs = useRef<Map<string, HTMLAudioElement>>(new Map());
@@ -579,7 +580,7 @@ function AudioEditor({
       }, 1000);
 
       // 存储timer引用以便清除
-      (window as any).__recordingTimer = timer;
+      recordingTimerRef.current = timer;
     } catch (error) {
       logger.error('开始录音失败:', error);
       message.error('无法访问麦克风，请检查权限设置');
@@ -590,9 +591,8 @@ function AudioEditor({
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      const timer = (window as any).__recordingTimer;
-      if (timer) {
-        clearInterval(timer);
+      if (recordingTimerRef.current) {
+        clearInterval(recordingTimerRef.current);
       }
     }
   };

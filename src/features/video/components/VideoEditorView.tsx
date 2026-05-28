@@ -77,7 +77,7 @@ const VideoEditorView = () => {
                 name={selectedVideo?.split('/').pop() || 'video'}
                 duration={videoInfo?.duration || 0}
                 path={selectedVideo || ''}
-                metadata={videoInfo as any}
+                metadata={videoInfo as unknown as { width?: number; height?: number; fps?: number; codec?: string; }}
               />
             </Card>
           )}

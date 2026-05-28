@@ -26,7 +26,7 @@ export interface StepExportProps {
   qualityGatePassed: boolean;
   saving: boolean;
   onPresetChange: (preset: '9:16' | '16:9' | '1:1') => void;
-  onExport: (settings: any) => void;
+  onExport: (settings: Partial<ExportSettings>) => void;
   onLocateIssue: (issue: QualityGateIssue) => void;
   onSave: () => void;
   onPrev: () => void;
