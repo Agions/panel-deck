@@ -165,7 +165,7 @@ jobs:
       - name: Run Playwright E2E tests
         run: pnpm exec playwright test
         env:
-          PLAYWRIGHT_BASE_URL: http://localhost:4173
+          PLAYWRIGHT_BASE_URL: http://localhost:1420
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
