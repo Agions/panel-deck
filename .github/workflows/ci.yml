@@ -25,7 +25,7 @@ jobs:
           node-version: "22"
           cache: 'pnpm'
       - run: pnpm install --no-frozen-lockfile
-      - run: pnpm run lint -- --quiet
+      - run: pnpm run lint
 
   type-check:
     name: TypeScript
