@@ -6,8 +6,10 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
-import type { ProjectData, VideoInfo, ExportRecord } from '@/shared/types/project';
-import type { ScriptData } from '@/shared/types/script';
+import type { ExportRecord } from '@/shared/types/legacy';
+import type { ProjectData } from '@/shared/types/project';
+import type { Script } from '@/shared/types/script';
+import type { VideoInfo } from '@/shared/types/video';
 
 import { createDebouncedStorage } from './middlewares/persistWithDebounce';
 import { createCurrentProjectSlice } from './slices/currentProject.slice';
