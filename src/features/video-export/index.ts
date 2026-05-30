@@ -1,20 +1,20 @@
 /**
- * features/video-export/index.ts
- * Video Export feature exports
+ * Video Export — re-export barrel
+ * ================================
+ * 所有服务已迁移到 @/features/video/services/。
+ * 此文件保留以维持向后兼容。
  */
 
-// Services with singleton getters
-export { default as VideoService, videoService } from './services/video.service';
-export { default as VideoCompositorService, videoCompositorService } from './services/video-compositor.service';
-export { default as ReviewExportService, reviewExportService } from './services/review-export.service';
-export { default as TauriService, getTauriService } from './services/tauri.service';
+export { videoService } from './services/video.service';
+export { videoCompositorService } from './services/video-compositor.service';
+export { reviewExportService } from './services/review-export.service';
+export { getTauriService } from './services/tauri.service';
 
-// Types
 export type {
   VideoInfo,
   VideoAnalysis,
   Scene,
-  Keyframe
+  Keyframe,
 } from '@/core/types';
 
 export type {
@@ -25,7 +25,7 @@ export type {
   BackgroundMusic,
   CompositionOptions,
   CompositionResult,
-  ExportProgress as VideoExportProgress
+  ExportProgress as VideoExportProgress,
 } from './services/video-compositor.service';
 
 export type {
@@ -34,7 +34,7 @@ export type {
   ReviewExportActivity,
   ReviewExportSource,
   ReviewExportStatus,
-  SaveReviewMarkdownOptions
+  SaveReviewMarkdownOptions,
 } from './services/review-export.service';
 
 export type {
@@ -49,5 +49,5 @@ export type {
   ExportOptions,
   ExportProgress,
   ExportProgressCallback,
-  DirInfo
+  DirInfo,
 } from './services/tauri.service';
