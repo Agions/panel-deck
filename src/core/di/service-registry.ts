@@ -164,7 +164,7 @@ import { imageGenerationService } from '@/core/services/image-generation.service
 import { lipSyncService } from '@/core/services/lip-sync.service';
 import { novelAnalyzer } from '@/core/services/novel-analyze.service';
 import { novelService } from '@/core/services/novel.service';
-import { getPipelineService } from '@/core/services/pipeline.service';
+import { pipelineService } from '@/core/pipeline/index.ts';
 import { projectImportExportService } from '@/core/services/project-import-export.service';
 import { qualityGateService } from '@/core/services/quality-gate.service';
 import { renderQueueService } from '@/core/services/render-queue.service';
@@ -207,7 +207,7 @@ export function registerCoreServices(): void {
 ServiceRegistry.register('subtitle', () => subtitleService, true);
   ServiceRegistry.register('composition', () => getCompositionService(), true);
   ServiceRegistry.register('novel-analyzer', () => novelAnalyzer, true);
-  ServiceRegistry.register('pipeline', () => getPipelineService(), true);
+  ServiceRegistry.register('pipeline', () => pipelineService, true);
   ServiceRegistry.register('project-import-export', () => projectImportExportService, true);
   ServiceRegistry.register('script-import', () => scriptImportService, true);
   ServiceRegistry.register('desktop-app', () => desktopAppService, true);
